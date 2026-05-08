@@ -1,63 +1,104 @@
-import React from 'react';
-import { View, TextInput, Text, StyleSheet, type TextInputProps } from 'react-native';
-import { colors, radii } from '../theme';
+import React, { forwardRef, useState } from 'react';
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  type TextInputProps,
+} from 'react-native';
+import { colors } from '../theme/colors';
+import { typeScale } from '../theme/typography';
+import { spacing, radii } from '../theme/spacing';
 
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
-  prefix?: React.ReactNode;
+  prefix?: string;
 }
 
-export function Input({ label, error, prefix, style, ...props }: InputProps) {
-  return (
-    <View style={styles.field}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      <View style={[styles.inputWrap, error && styles.inputError]}>
-        {prefix}
-        <TextInput
-          style={[styles.input, style]}
-          placeholderTextColor={colors.textTertiary}
-          {...props}
-        />
+export const Input = forwardRef<TextInput, InputProps>(
+  ({ label, error, prefix, style, ...props }, ref) => {
+    const [isFocused, setIsFocused] = useState(false);
+
+    return (
+      <View style={styles.container}>
+        {label && <Text style={styles.label}>{label}</Text>}
+        <View
+          style={[
+            styles.inputWrapper,
+            isFocused && styles.inputWrapperFocused,
+            error ? styles.inputWrapperError : undefined,
+          ]}
+        >
+          {prefix && <Text style={styles.prefix}>{prefix}</Text>}
+          <TextInput
+            ref={ref}
+            style={[styles.input, prefix ? styles.inputWithPrefix : undefined, style]}
+            placeholderTextColor={colors.textTertiary}
+            selectionColor={colors.forge}
+            cursorColor={colors.forge}
+            onFocus={(e) => {
+              setIsFocused(true);
+              props.onFocus?.(e);
+            }}
+            onBlur={(e) => {
+              setIsFocused(false);
+              props.onBlur?.(e);
+            }}
+            {...props}
+          />
+        </View>
+        {error && <Text style={styles.error}>{error}</Text>}
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
-    </View>
-  );
-}
+    );
+  }
+);
+
+Input.displayName = 'Input';
 
 const styles = StyleSheet.create({
-  field: {
-    gap: 6,
-    marginBottom: 14,
+  container: {
+    marginBottom: spacing.base,
   },
   label: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.66,
-    textTransform: 'uppercase',
-    color: colors.textTertiary,
+    ...typeScale.caption,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
   },
-  inputWrap: {
-    height: 44,
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.default,
-    paddingHorizontal: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+    height: 48,
+    paddingHorizontal: spacing.md,
   },
-  inputError: {
+  inputWrapperFocused: {
+    borderColor: colors.forge,
+  },
+  inputWrapperError: {
     borderColor: colors.alert,
+  },
+  prefix: {
+    ...typeScale.body1,
+    color: colors.textSecondary,
+    marginRight: spacing.xs,
   },
   input: {
     flex: 1,
+    ...typeScale.body1,
     color: colors.textPrimary,
-    fontSize: 14,
+    height: '100%' as any,
+    padding: 0,
   },
-  errorText: {
-    fontSize: 12,
-    color: colors.alertSoft,
+  inputWithPrefix: {
+    paddingLeft: 0,
+  },
+  error: {
+    ...typeScale.body2,
+    color: colors.alert,
+    marginTop: spacing.xs,
   },
 });

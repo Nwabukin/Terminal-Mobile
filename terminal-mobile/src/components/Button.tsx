@@ -7,52 +7,62 @@ import {
   type ViewStyle,
   type TextStyle,
 } from 'react-native';
-import { colors, radii } from '../theme';
-
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
-type ButtonSize = 'sm' | 'md' | 'lg';
+import { colors } from '../theme/colors';
+import { typeScale } from '../theme/typography';
+import { radii } from '../theme/spacing';
 
 interface ButtonProps {
   title: string;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  loading?: boolean;
+  onPress: () => void;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  isLoading?: boolean;
   disabled?: boolean;
-  onPress?: () => void;
   style?: ViewStyle;
-  icon?: React.ReactNode;
+  textStyle?: TextStyle;
 }
 
 export function Button({
   title,
-  variant = 'primary',
-  size = 'md',
-  loading = false,
-  disabled = false,
   onPress,
+  variant = 'primary',
+  isLoading = false,
+  disabled = false,
   style,
-  icon,
+  textStyle,
 }: ButtonProps) {
+  const isDisabled = disabled || isLoading;
+
   return (
     <TouchableOpacity
-      onPress={onPress}
-      disabled={disabled || loading}
-      activeOpacity={0.88}
       style={[
         styles.base,
-        variantStyles[variant],
-        sizeStyles[size],
-        disabled && styles.disabled,
+        variant === 'primary' && styles.primary,
+        variant === 'secondary' && styles.secondary,
+        variant === 'ghost' && styles.ghost,
+        isDisabled && styles.disabled,
         style,
       ]}
+      onPress={onPress}
+      disabled={isDisabled}
+      activeOpacity={0.8}
     >
-      {loading ? (
-        <ActivityIndicator size="small" color={variant === 'primary' ? colors.white : colors.textSecondary} />
+      {isLoading ? (
+        <ActivityIndicator
+          size="small"
+          color={variant === 'primary' ? colors.textOnAccent : colors.forge}
+        />
       ) : (
-        <>
-          {icon}
-          <Text style={[styles.text, variantTextStyles[variant], sizeTextStyles[size]]}>{title}</Text>
-        </>
+        <Text
+          style={[
+            styles.text,
+            variant === 'primary' && styles.primaryText,
+            variant === 'secondary' && styles.secondaryText,
+            variant === 'ghost' && styles.ghostText,
+            textStyle,
+          ]}
+        >
+          {title}
+        </Text>
       )}
     </TouchableOpacity>
   );
@@ -60,42 +70,36 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 44,
     borderRadius: radii.default,
-    gap: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
   },
-  text: {
-    fontWeight: '600',
+  primary: {
+    backgroundColor: colors.forge,
+  },
+  secondary: {
+    backgroundColor: colors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  ghost: {
+    backgroundColor: 'transparent',
   },
   disabled: {
-    opacity: 0.4,
+    opacity: 0.5,
+  },
+  text: {
+    ...typeScale.h2,
+  },
+  primaryText: {
+    color: colors.textOnAccent,
+  },
+  secondaryText: {
+    color: colors.textPrimary,
+  },
+  ghostText: {
+    color: colors.forge,
   },
 });
-
-const variantStyles: Record<ButtonVariant, ViewStyle> = {
-  primary: { backgroundColor: colors.forge },
-  secondary: { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.borderActive },
-  ghost: { backgroundColor: 'transparent' },
-  danger: { backgroundColor: colors.alert },
-};
-
-const variantTextStyles: Record<ButtonVariant, TextStyle> = {
-  primary: { color: colors.white },
-  secondary: { color: colors.textPrimary },
-  ghost: { color: colors.textSecondary },
-  danger: { color: colors.white },
-};
-
-const sizeStyles: Record<ButtonSize, ViewStyle> = {
-  sm: { height: 32, paddingHorizontal: 12 },
-  md: { height: 44, paddingHorizontal: 18 },
-  lg: { height: 52, paddingHorizontal: 28 },
-};
-
-const sizeTextStyles: Record<ButtonSize, TextStyle> = {
-  sm: { fontSize: 12 },
-  md: { fontSize: 13 },
-  lg: { fontSize: 15 },
-};

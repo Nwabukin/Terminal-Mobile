@@ -1,44 +1,91 @@
 import apiClient from './client';
-import type { ApiResponse, AuthTokens, User } from './types';
+import type { AuthTokens, User } from './types';
 
-export async function login(email: string, password: string) {
-  const { data } = await apiClient.post<ApiResponse<AuthTokens & { user: User }>>(
-    '/auth/login/',
-    { email, password }
-  );
-  return data;
-}
+// --- Request types ---
 
-export async function register(payload: {
+export interface RegisterRequest {
   email: string;
-  password: string;
+  phone: string;
   first_name: string;
   last_name: string;
-  phone: string;
-}) {
-  const { data } = await apiClient.post<ApiResponse<AuthTokens & { user: User }>>(
-    '/auth/register/',
-    payload
-  );
-  return data;
+  password: string;
+  password_confirm: string;
 }
 
-export async function verifyPhone(otp: string) {
-  const { data } = await apiClient.post<ApiResponse<null>>('/auth/verify-phone/', { otp });
-  return data;
+export interface LoginRequest {
+  email: string;
+  password: string;
 }
 
-export async function resendOtp() {
-  const { data } = await apiClient.post<ApiResponse<null>>('/auth/resend-otp/');
-  return data;
+export interface VerifyPhoneRequest {
+  otp_code: string;
 }
 
-export async function refreshToken(refresh: string) {
-  const { data } = await apiClient.post<{ access: string }>('/auth/token/refresh/', { refresh });
-  return data;
+export interface RefreshTokenRequest {
+  refresh: string;
 }
 
-export async function logout(refresh: string) {
-  const { data } = await apiClient.post<ApiResponse<null>>('/auth/logout/', { refresh });
-  return data;
+export interface LogoutRequest {
+  refresh: string;
+}
+
+// --- Response types ---
+
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  tokens: AuthTokens;
+  user: {
+    id: string;
+    email: string;
+    full_name: string;
+    is_owner: boolean;
+    is_renter: boolean;
+  };
+}
+
+export interface LoginResponse {
+  access: string;
+  refresh: string;
+}
+
+export interface VerifyPhoneResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ResendOtpResponse {
+  success: boolean;
+  message: string;
+}
+
+// --- API functions ---
+
+export async function register(data: RegisterRequest): Promise<RegisterResponse> {
+  const response = await apiClient.post<RegisterResponse>('/auth/register/', data);
+  return response.data;
+}
+
+export async function login(data: LoginRequest): Promise<LoginResponse> {
+  const response = await apiClient.post<LoginResponse>('/auth/login/', data);
+  return response.data;
+}
+
+export async function verifyPhone(data: VerifyPhoneRequest): Promise<VerifyPhoneResponse> {
+  const response = await apiClient.post<VerifyPhoneResponse>('/auth/verify-phone/', data);
+  return response.data;
+}
+
+export async function resendOtp(): Promise<ResendOtpResponse> {
+  const response = await apiClient.post<ResendOtpResponse>('/auth/resend-otp/');
+  return response.data;
+}
+
+export async function refreshToken(data: RefreshTokenRequest): Promise<{ access: string }> {
+  const response = await apiClient.post<{ access: string }>('/auth/token/refresh/', data);
+  return response.data;
+}
+
+export async function logout(data: LogoutRequest): Promise<void> {
+  await apiClient.post('/auth/logout/', data);
 }
