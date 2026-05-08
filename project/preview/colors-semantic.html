@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.card { padding: 20px 24px; }
+.row2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.group { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.bar { display: grid; grid-template-columns: 1fr 1fr 1fr; height: 48px; }
+.bar > div { display: flex; align-items: flex-end; padding: 6px; font-family: var(--font-mono); font-size: 9px; color: rgba(255,255,255,0.85); }
+.meta { padding: 8px 10px; background: var(--surface-elevated); }
+.name { font-size: 11px; color: var(--text-primary); font-weight: 600; }
+.role { font-size: 9px; color: var(--text-tertiary); margin-top: 2px; letter-spacing: 0.04em; text-transform: uppercase; }
+</style></head>
+<body><div class="card">
+  <div class="row2">
+    <div class="group">
+      <div class="bar"><div style="background:#16A34A"></div><div style="background:#4ADE80"></div><div style="background:#0A3D22"></div></div>
+      <div class="meta"><div class="name" style="color:#4ADE80">Clear · Success</div><div class="role">Active / available</div></div>
+    </div>
+    <div class="group">
+      <div class="bar"><div style="background:#3B82F6"></div><div style="background:#60A5FA"></div><div style="background:#1E3A6E"></div></div>
+      <div class="meta"><div class="name" style="color:#60A5FA">Signal · Info</div><div class="role">Confirmed</div></div>
+    </div>
+    <div class="group">
+      <div class="bar"><div style="background:#F5A623"></div><div style="background:#F5A623"></div><div style="background:#2A1E08"></div></div>
+      <div class="meta"><div class="name" style="color:#F5A623">Amber · Warn</div><div class="role">Pending</div></div>
+    </div>
+    <div class="group">
+      <div class="bar"><div style="background:#EF4444"></div><div style="background:#F87171"></div><div style="background:#4A1010"></div></div>
+      <div class="meta"><div class="name" style="color:#F87171">Alert · Danger</div><div class="role">Declined</div></div>
+    </div>
+  </div>
+</div></body></html>

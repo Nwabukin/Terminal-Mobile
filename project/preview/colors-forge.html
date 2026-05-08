@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.card { padding: 20px 24px; }
+.swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.sw { border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.chip { height: 64px; display: flex; align-items: flex-end; padding: 8px; }
+.dot { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.85); }
+.meta { padding: 8px 10px; background: var(--surface-elevated); }
+.name { font-size: 11px; color: var(--text-primary); font-weight: 500; margin-bottom: 2px; }
+.hex { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
+.role { font-size: 9px; color: var(--text-tertiary); margin-top: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+</style></head>
+<body><div class="card">
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#FF8C24"></div><div class="meta"><div class="name">Forge light</div><div class="hex">#FF8C24</div><div class="role">Hover</div></div></div>
+    <div class="sw"><div class="chip" style="background:#E8750A"></div><div class="meta"><div class="name">Forge</div><div class="hex">#E8750A</div><div class="role">Primary CTA</div></div></div>
+    <div class="sw"><div class="chip" style="background:#B85A07"></div><div class="meta"><div class="name">Forge mid</div><div class="hex">#B85A07</div><div class="role">Pressed</div></div></div>
+    <div class="sw"><div class="chip" style="background:#7A3D04"></div><div class="meta"><div class="name">Forge dim</div><div class="hex">#7A3D04</div><div class="role">Tinted bg</div></div></div>
+    <div class="sw"><div class="chip" style="background:#F5A623"></div><div class="meta"><div class="name">Amber</div><div class="hex">#F5A623</div><div class="role">Pending</div></div></div>
+  </div>
+</div></body></html>

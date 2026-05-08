@@ -1,0 +1,31 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.card { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+.row { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.row.active { border-left: 3px solid var(--clear); padding-left: 13px; }
+.row.muted { opacity: 0.6; }
+.top { display: flex; align-items: center; justify-content: space-between; }
+.title { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.meta { font-family: var(--font-body); font-size: 13px; color: var(--text-secondary); display: flex; gap: 8px; align-items: center; }
+.mono { font-family: var(--font-mono); color: var(--text-primary); }
+.muted .mono, .muted .title { text-decoration: line-through; color: var(--text-secondary); }
+.badge { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; font-family: var(--font-body); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid; }
+.success { background: var(--clear-dim); color: var(--clear-soft); border-color: #16A34A44; }
+.warning { background: var(--amber-dim); color: var(--amber); border-color: #F5A62344; }
+.neutral { background: var(--surface-high); color: var(--text-secondary); border-color: var(--border); }
+</style></head>
+<body><div class="card">
+  <div class="row active">
+    <div class="top"><div class="title">Liebherr LTM 1200 · 3 days</div><span class="badge success">ACTIVE</span></div>
+    <div class="meta">May 10 – May 13 · <span class="mono">₦135,000</span></div>
+  </div>
+  <div class="row">
+    <div class="top"><div class="title">Flatbed truck · 3 days</div><span class="badge warning">PENDING</span></div>
+    <div class="meta">May 18 – May 20 · <span class="mono">₦90,000</span></div>
+  </div>
+  <div class="row muted">
+    <div class="top"><div class="title">Container yard · 1 month</div><span class="badge neutral">CANCELLED</span></div>
+    <div class="meta">Apr 1 – May 1 · <span class="mono">₦1,200,000</span></div>
+  </div>
+</div></body></html>

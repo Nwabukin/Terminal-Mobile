@@ -1,0 +1,236 @@
+/* ============================================================
+   Terminal Design System (TDS) v1.1 — Forge Dark
+   Colors + Typography tokens
+   ============================================================ */
+
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/barlow-condensed@5.0.8/700.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@6.1.0/400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@6.1.0/500.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@6.1.0/600.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@6.1.0/400.css');
+
+:root {
+  /* ---- Foundation surfaces ---- */
+  --abyss:              #0C0C0F;
+  --surface:            #131318;
+  --surface-elevated:   #1A1A22;
+  --surface-high:       #22222C;
+  --border:             #2A2A36;
+  --border-active:      #3E3E50;
+
+  /* ---- Forge accent ---- */
+  --forge-light:        #FF8C24;
+  --forge:              #E8750A;
+  --forge-mid:          #B85A07;
+  --forge-dim:          #7A3D04;
+  --amber:              #F5A623;
+  --amber-dim:          #2A1E08;
+
+  /* ---- Semantic ---- */
+  --clear:              #16A34A;
+  --clear-soft:         #4ADE80;
+  --clear-dim:          #0A3D22;
+  --signal:             #3B82F6;
+  --signal-soft:        #60A5FA;
+  --signal-dim:         #1E3A6E;
+  --alert:              #EF4444;
+  --alert-soft:         #F87171;
+  --alert-dim:          #4A1010;
+
+  /* ---- Text ---- */
+  --text-primary:       #F1F1F8;
+  --text-secondary:     #8E8EA8;
+  --text-tertiary:      #52526A;
+  --text-on-accent:     #FFFFFF;
+
+  /* ---- Semantic role tokens (components reference these) ---- */
+  --bg-app:             var(--abyss);
+  --bg-card:            var(--surface);
+  --bg-input:           var(--surface-elevated);
+  --bg-hover:           var(--surface-high);
+  --bg-tinted-success:  var(--clear-dim);
+  --bg-tinted-info:     var(--signal-dim);
+  --bg-tinted-warn:     var(--amber-dim);
+  --bg-tinted-danger:   var(--alert-dim);
+  --bg-tinted-accent:   var(--forge-dim);
+
+  --accent:             var(--forge);
+  --accent-hover:       var(--forge-light);
+  --accent-pressed:     var(--forge-mid);
+
+  --text-on-card:       var(--text-primary);
+  --text-meta:          var(--text-secondary);
+  --text-hint:          var(--text-tertiary);
+
+  /* ---- Type families ---- */
+  --font-display:       'Barlow Condensed', 'Oswald', 'Impact', sans-serif;
+  --font-body:          'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --font-mono:          'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---- Spacing (4px base) ---- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ---- Radii ---- */
+  --radius-sharp:    0;
+  --radius-default:  4px;
+  --radius-card:     8px;
+  --radius-sheet:    12px;
+  --radius-pill:     999px;
+
+  /* ---- Motion ---- */
+  --dur-fast:        80ms;
+  --dur-default:     200ms;
+  --dur-sheet:       280ms;
+  --dur-skeleton:    1500ms;
+  --ease-standard:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-decelerate: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---- Elevation (Forge Dark uses borders, not shadows) ---- */
+  --shadow-sheet:    0 -8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================================
+   Type scale — semantic classes
+   Sizes use mobile / web pairing; pick whichever applies.
+   ============================================================ */
+
+.tds-display-1 {
+  font-family: var(--font-display);
+  font-size: 48px;            /* web: 60px */
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+@media (min-width: 1024px) { .tds-display-1 { font-size: 60px; } }
+
+.tds-display-2 {
+  font-family: var(--font-display);
+  font-size: 36px;            /* web: 44px */
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+@media (min-width: 1024px) { .tds-display-2 { font-size: 44px; } }
+
+.tds-display-3 {
+  font-family: var(--font-display);
+  font-size: 28px;            /* web: 32px */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+@media (min-width: 1024px) { .tds-display-3 { font-size: 32px; } }
+
+.tds-h1 {
+  font-family: var(--font-body);
+  font-size: 22px;            /* web: 24px */
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+@media (min-width: 1024px) { .tds-h1 { font-size: 24px; } }
+
+.tds-h2 {
+  font-family: var(--font-body);
+  font-size: 17px;            /* web: 18px */
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+@media (min-width: 1024px) { .tds-h2 { font-size: 18px; } }
+
+.tds-h3 {
+  font-family: var(--font-body);
+  font-size: 13px;            /* web: 14px */
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+@media (min-width: 1024px) { .tds-h3 { font-size: 14px; } }
+
+.tds-body-1 {
+  font-family: var(--font-body);
+  font-size: 15px;            /* web: 16px */
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+@media (min-width: 1024px) { .tds-body-1 { font-size: 16px; } }
+
+.tds-body-2 {
+  font-family: var(--font-body);
+  font-size: 13px;            /* web: 14px */
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+@media (min-width: 1024px) { .tds-body-2 { font-size: 14px; } }
+
+.tds-caption {
+  font-family: var(--font-body);
+  font-size: 11px;            /* web: 12px */
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+@media (min-width: 1024px) { .tds-caption { font-size: 12px; } }
+
+.tds-mono-1 {
+  font-family: var(--font-mono);
+  font-size: 15px;            /* web: 16px */
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+@media (min-width: 1024px) { .tds-mono-1 { font-size: 16px; } }
+
+.tds-mono-2 {
+  font-family: var(--font-mono);
+  font-size: 13px;            /* web: 14px */
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+@media (min-width: 1024px) { .tds-mono-2 { font-size: 14px; } }
+
+.tds-mono-3 {
+  font-family: var(--font-mono);
+  font-size: 11px;            /* web: 12px */
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+}
+@media (min-width: 1024px) { .tds-mono-3 { font-size: 12px; } }
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-default: 0ms;
+    --dur-sheet: 0ms;
+  }
+}

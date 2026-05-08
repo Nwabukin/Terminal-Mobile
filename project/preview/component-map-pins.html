@@ -1,0 +1,43 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.card { padding: 32px 24px; background: linear-gradient(180deg, #0c1217 0%, #0a0e12 100%); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-end; justify-content: center; }
+.pin { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.bubble { background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 12px 6px 8px; display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px; color: var(--text-primary); position: relative; }
+.bubble::after { content: ""; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--surface); }
+.bubble svg { width: 16px; height: 16px; color: var(--text-secondary); }
+.bubble.selected { background: var(--forge); color: #fff; border: 2px solid var(--forge-light); transform: scale(1.1); }
+.bubble.selected::after { border-top-color: var(--forge); }
+.bubble.selected svg { color: #fff; }
+.bubble.cluster { background: var(--surface-elevated); }
+.bubble.unavail { opacity: 0.4; }
+.tag { font-family: var(--font-mono); font-size: 9px; color: var(--text-tertiary); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 6px; }
+.dot { width: 4px; height: 4px; border-radius: 999px; background: currentColor; }
+</style></head>
+<body><div class="card">
+  <div class="pin">
+    <div class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V8h14M19 8V4l-9 4M9 21v-6h4v6"/></svg>₦45k/d</div>
+    <div class="dot" style="color:var(--surface)"></div>
+    <span class="tag">Equipment</span>
+  </div>
+  <div class="pin">
+    <div class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="17" r="2"/><circle cx="18" cy="17" r="2"/><path d="M2 17v-5h6l2-3h6v8M2 12h6"/></svg>₦12k/d</div>
+    <div class="dot" style="color:var(--surface)"></div>
+    <span class="tag">Vehicle</span>
+  </div>
+  <div class="pin">
+    <div class="bubble selected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21V9l9-5 9 5v12M9 21v-6h6v6"/></svg>₦80,000/mo</div>
+    <div class="dot" style="color:var(--forge)"></div>
+    <span class="tag" style="color:var(--forge-light)">Selected</span>
+  </div>
+  <div class="pin">
+    <div class="bubble cluster">12</div>
+    <div class="dot" style="color:var(--surface-elevated)"></div>
+    <span class="tag">Cluster</span>
+  </div>
+  <div class="pin">
+    <div class="bubble unavail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="14" width="8" height="6"/><rect x="13" y="14" width="8" height="6"/><rect x="6" y="8" width="8" height="6"/></svg>500 TEU</div>
+    <div class="dot" style="color:var(--surface)"></div>
+    <span class="tag">Unavailable</span>
+  </div>
+</div></body></html>

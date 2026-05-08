@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.card { padding: 24px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.unit { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px 8px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 6px; }
+.icon { color: var(--forge); }
+.icon.lg { color: var(--text-primary); }
+.name { font-family: var(--font-body); font-size: 11px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.04em; text-transform: uppercase; }
+.tag { font-family: var(--font-mono); font-size: 9px; color: var(--text-tertiary); }
+</style></head>
+<body><div class="card">
+  <div class="unit">
+    <svg class="icon lg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8h14M19 8V4l-9 4M5 8l-2-2M9 21v-6h4v6M19 8l3 13"/></svg>
+    <span class="name">Equipment</span>
+    <span class="tag">crane</span>
+  </div>
+  <div class="unit">
+    <svg class="icon lg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="2"/><circle cx="18" cy="17" r="2"/><path d="M2 17h2M6 17h12M20 17h2M2 17v-5h6l2-3h6v8M2 12h6M14 9v8"/></svg>
+    <span class="name">Vehicle</span>
+    <span class="tag">flatbed</span>
+  </div>
+  <div class="unit">
+    <svg class="icon lg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-5 9 5v12M3 21h18M9 21v-6h6v6M9 12h6"/></svg>
+    <span class="name">Warehouse</span>
+    <span class="tag">building</span>
+  </div>
+  <div class="unit">
+    <svg class="icon lg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="8" height="6"/><rect x="13" y="14" width="8" height="6"/><rect x="6" y="8" width="8" height="6"/><rect x="10" y="2" width="8" height="6"/></svg>
+    <span class="name">Terminal</span>
+    <span class="tag">containers</span>
+  </div>
+  <div class="unit">
+    <svg class="icon lg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7M21 21V7M3 7h18M3 11h18M3 15h18M3 19h18M3 7l3-3h12l3 3"/></svg>
+    <span class="name">Facility</span>
+    <span class="tag">fenced</span>
+  </div>
+</div></body></html>
