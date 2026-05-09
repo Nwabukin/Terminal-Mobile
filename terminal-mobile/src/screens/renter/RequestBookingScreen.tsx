@@ -516,6 +516,7 @@ const s = StyleSheet.create({
     marginBottom: spacing.md,
   },
   durationCardActive: {
+    backgroundColor: colors.forgeDim,
     borderColor: colors.forge,
   },
   radioRow: {

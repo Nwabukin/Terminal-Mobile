@@ -109,7 +109,7 @@ export function ThreadScreen() {
     }
   }, [serverMessages]);
 
-  useAbly(threadId ? `thread:${threadId}` : null, (msg: unknown) => {
+  useAbly(threadId ?? '', (msg: unknown) => {
     const incoming = msg as Message;
     if (!incoming?.id) return;
     setLocalMessages((prev) => {
