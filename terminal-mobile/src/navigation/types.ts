@@ -1,8 +1,11 @@
+import type { Listing } from '../api/types';
+
 export type RenterStackParamList = {
   RenterHome: undefined;
   ListingDetail: { listingId: string };
-  RequestBooking: { listingId: string };
-  Thread: { listingId: string; ownerId: string };
+  RequestBooking: { listing: Listing };
+  BookingDetail: { bookingId: string };
+  Thread: { threadId: string };
 };
 
 export type RenterTabParamList = {

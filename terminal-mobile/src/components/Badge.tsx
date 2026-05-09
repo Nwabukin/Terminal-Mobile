@@ -1,45 +1,65 @@
 import React from 'react';
-import { View, Text, StyleSheet, type ViewStyle, type TextStyle } from 'react-native';
-import { colors, radii } from '../theme';
+import { View, Text, StyleSheet } from 'react-native';
+import { colors } from '../theme/colors';
+import { typeScale } from '../theme/typography';
 
-type BadgeVariant = 'success' | 'info' | 'warning' | 'danger' | 'accent' | 'neutral';
+type BadgeVariant = 'success' | 'info' | 'warning' | 'danger' | 'neutral' | 'accent';
 
 interface BadgeProps {
   label: string;
-  variant: BadgeVariant;
+  variant?: BadgeVariant;
+  size?: 'sm' | 'md';
 }
 
-const variantConfig: Record<BadgeVariant, { bg: string; fg: string; border: string }> = {
-  success: { bg: colors.clearDim, fg: colors.clearSoft, border: '#16A34A44' },
-  info: { bg: colors.signalDim, fg: colors.signalSoft, border: '#3B82F644' },
-  warning: { bg: colors.amberDim, fg: colors.amber, border: '#F5A62344' },
-  danger: { bg: colors.alertDim, fg: colors.alertSoft, border: '#EF444444' },
-  accent: { bg: colors.forgeDim, fg: colors.forgeLight, border: '#E8750A44' },
-  neutral: { bg: colors.surfaceHigh, fg: colors.textSecondary, border: colors.border },
+const variantStyles: Record<BadgeVariant, { bg: string; text: string }> = {
+  success: { bg: colors.clearDim, text: colors.clearSoft },
+  info: { bg: colors.signalDim, text: colors.signalSoft },
+  warning: { bg: colors.amberDim, text: colors.amber },
+  danger: { bg: colors.alertDim, text: colors.alertSoft },
+  neutral: { bg: colors.surfaceElevated, text: colors.textSecondary },
+  accent: { bg: colors.forgeDim, text: colors.forgeLight },
 };
 
-export function Badge({ label, variant }: BadgeProps) {
-  const config = variantConfig[variant];
+export function Badge({ label, variant = 'neutral', size = 'sm' }: BadgeProps) {
+  const variantStyle = variantStyles[variant];
+
   return (
-    <View style={[styles.badge, { backgroundColor: config.bg, borderColor: config.border }]}>
-      <Text style={[styles.text, { color: config.fg }]}>{label}</Text>
+    <View style={[
+      styles.badge,
+      { backgroundColor: variantStyle.bg },
+      size === 'md' && styles.badgeMd,
+    ]}>
+      <Text style={[
+        styles.label,
+        { color: variantStyle.text },
+        size === 'md' && styles.labelMd,
+      ]}>
+        {label}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   badge: {
-    height: 22,
-    paddingHorizontal: 9,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
   },
-  text: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.66,
+  badgeMd: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  label: {
+    fontFamily: typeScale.caption.fontFamily,
+    fontSize: typeScale.caption.fontSize,
+    lineHeight: typeScale.caption.lineHeight,
+    letterSpacing: typeScale.caption.letterSpacing,
     textTransform: 'uppercase',
+  },
+  labelMd: {
+    fontSize: 13,
+    lineHeight: 18,
   },
 });

@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
@@ -11,28 +10,16 @@ import {
 
 import MapScreen from '../screens/renter/MapScreen';
 import ListingDetailScreen from '../screens/renter/ListingDetailScreen';
+import { RequestBookingScreen } from '../screens/renter/RequestBookingScreen';
 import { BookingsScreen } from '../screens/shared/BookingsScreen';
+import { BookingDetailScreen } from '../screens/owner/BookingDetailScreen';
 import { ThreadListScreen } from '../screens/shared/ThreadListScreen';
+import { ThreadScreen } from '../screens/shared/ThreadScreen';
 import { ProfileScreen } from '../screens/shared/ProfileScreen';
 import { colors, spacing } from '../theme';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
-function RequestBookingPlaceholder() {
-  return (
-    <View style={phStyles.container}>
-      <Text style={phStyles.text}>REQUEST BOOKING</Text>
-      <Text style={phStyles.sub}>Coming in Wave 03</Text>
-    </View>
-  );
-}
-
-const phStyles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.abyss, justifyContent: 'center', alignItems: 'center' },
-  text: { fontFamily: 'BarlowCondensed_700Bold', fontSize: 28, color: colors.textPrimary, textTransform: 'uppercase' },
-  sub: { fontFamily: 'IBMPlexSans_400Regular', fontSize: 13, color: colors.textTertiary, marginTop: 8 },
-});
 
 function RenterTabsInner() {
   return (
@@ -97,7 +84,16 @@ export function RenterTabs() {
     >
       <Stack.Screen name="RenterHome" component={RenterTabsInner} />
       <Stack.Screen name="ListingDetail" component={ListingDetailScreen} />
-      <Stack.Screen name="RequestBooking" component={RequestBookingPlaceholder} />
+      <Stack.Screen
+        name="RequestBooking"
+        component={RequestBookingScreen}
+        options={{
+          presentation: 'transparentModal',
+          animation: 'slide_from_bottom',
+        }}
+      />
+      <Stack.Screen name="BookingDetail" component={BookingDetailScreen} />
+      <Stack.Screen name="Thread" component={ThreadScreen} />
     </Stack.Navigator>
   );
 }
