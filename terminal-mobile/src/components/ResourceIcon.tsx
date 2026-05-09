@@ -3,28 +3,30 @@ import {
   IconCrane,
   IconTruck,
   IconBuildingWarehouse,
-  IconBox,
-  IconBuildingFortress,
+  IconContainer,
+  IconFence,
 } from '@tabler/icons-react-native';
-import type { ColorValue } from 'react-native';
-
-type ResourceType = 'equipment' | 'vehicle' | 'warehouse' | 'terminal' | 'facility';
+import { colors } from '../theme';
 
 interface ResourceIconProps {
-  type: ResourceType;
+  resourceType: 'equipment' | 'vehicle' | 'warehouse' | 'terminal' | 'facility';
   size?: number;
-  color?: ColorValue;
+  color?: string;
 }
 
-const iconMap = {
+const ICON_MAP = {
   equipment: IconCrane,
   vehicle: IconTruck,
   warehouse: IconBuildingWarehouse,
-  terminal: IconBox,
-  facility: IconBuildingFortress,
-};
+  terminal: IconContainer,
+  facility: IconFence,
+} as const;
 
-export function ResourceIcon({ type, size = 24, color }: ResourceIconProps) {
-  const Icon = iconMap[type] || IconBuildingWarehouse;
-  return <Icon size={size} color={color as string} strokeWidth={1.5} />;
+export function ResourceIcon({
+  resourceType,
+  size = 20,
+  color = colors.textSecondary,
+}: ResourceIconProps) {
+  const Icon = ICON_MAP[resourceType] ?? IconCrane;
+  return <Icon size={size} color={color} strokeWidth={1.5} />;
 }

@@ -1,31 +1,26 @@
 import apiClient from './client';
-import type { ApiResponse, PaginatedResponse, Listing } from './types';
+import type { Listing, ApiResponse } from './types';
 
-export async function getListings(params?: Record<string, string>) {
-  const { data } = await apiClient.get<PaginatedResponse<Listing>>('/listings/', { params });
-  return data;
-}
-
-export async function getListing(id: string) {
-  const { data } = await apiClient.get<ApiResponse<Listing>>(`/listings/${id}/`);
-  return data;
-}
-
-export async function createListing(payload: Partial<Listing>) {
-  const { data } = await apiClient.post<ApiResponse<Listing>>('/listings/', payload);
-  return data;
-}
-
-export async function updateListing(id: string, payload: Partial<Listing>) {
-  const { data } = await apiClient.patch<ApiResponse<Listing>>(`/listings/${id}/`, payload);
-  return data;
-}
-
-export async function uploadListingMedia(listingId: string, formData: FormData) {
-  const { data } = await apiClient.post<ApiResponse<{ file_url: string }>>(
-    `/listings/${listingId}/media/`,
-    formData,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
+export async function fetchListingDetail(
+  listingId: string
+): Promise<Listing> {
+  const { data } = await apiClient.get<ApiResponse<Listing>>(
+    `/listings/${listingId}/`
   );
-  return data;
+
+  if (!data.success || !data.data) {
+    throw new Error(data.message || 'Failed to fetch listing');
+  }
+
+  return data.data;
+}
+
+export async function fetchMyListings(): Promise<Listing[]> {
+  const { data } = await apiClient.get<ApiResponse<Listing[]>>('/listings/');
+
+  if (!data.success || !data.data) {
+    throw new Error(data.message || 'Failed to fetch listings');
+  }
+
+  return data.data;
 }
