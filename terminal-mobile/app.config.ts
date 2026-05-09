@@ -4,6 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Terminal',
   slug: 'terminal-mobile',
+  scheme: 'terminal',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
