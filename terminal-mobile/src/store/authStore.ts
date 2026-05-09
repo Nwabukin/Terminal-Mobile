@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import * as SecureStore from 'expo-secure-store';
+import { getItem, setItem, deleteItem } from '../utils/storage';
 import type { User, AuthTokens } from '../api/types';
 
 interface AuthState {
@@ -20,19 +20,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   setUser: (user) => set({ user, isAuthenticated: true }),
 
   setTokens: async (tokens) => {
-    await SecureStore.setItemAsync('access_token', tokens.access);
-    await SecureStore.setItemAsync('refresh_token', tokens.refresh);
+    await setItem('access_token', tokens.access);
+    await setItem('refresh_token', tokens.refresh);
   },
 
   clearAuth: async () => {
-    await SecureStore.deleteItemAsync('access_token');
-    await SecureStore.deleteItemAsync('refresh_token');
+    await deleteItem('access_token');
+    await deleteItem('refresh_token');
     set({ user: null, isAuthenticated: false });
   },
 
   hydrate: async () => {
     try {
-      const token = await SecureStore.getItemAsync('access_token');
+      const token = await getItem('access_token');
       if (token) {
         set({ isAuthenticated: true, isLoading: false });
       } else {
