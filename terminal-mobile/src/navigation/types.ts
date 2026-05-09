@@ -31,4 +31,5 @@ export type OwnerTabParamList = {
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
+  ListingWizard: undefined;
 };
