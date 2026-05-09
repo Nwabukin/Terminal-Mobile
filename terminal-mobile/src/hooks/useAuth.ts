@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
+import { getItem } from '../utils/storage';
 import { useAuthStore } from '../store/authStore';
 import * as authApi from '../api/auth';
 import { fetchMe } from '../api/users';
@@ -101,7 +101,7 @@ export function useAuth() {
 
   const handleLogout = async () => {
     try {
-      const refreshToken = await SecureStore.getItemAsync('refresh_token');
+      const refreshToken = await getItem('refresh_token');
       if (refreshToken) {
         await authApi.logout({ refresh: refreshToken });
       }

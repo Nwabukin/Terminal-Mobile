@@ -1,6 +1,8 @@
-export const API_BASE_URL = __DEV__
-  ? 'http://localhost:8000'
-  : 'https://your-production-domain.railway.app';
+import { Platform } from 'react-native';
+
+export const API_BASE_URL = Platform.OS === 'web'
+  ? 'http://localhost:3456'
+  : 'https://terminalv2-production.up.railway.app';
 
 export const MAPBOX_ACCESS_TOKEN =
   process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN ?? '';
