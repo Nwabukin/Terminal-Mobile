@@ -17,6 +17,7 @@ import * as SplashScreen from 'expo-splash-screen';
 
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { useAuthStore } from './src/store/authStore';
+import { useAppStore } from './src/store/appStore';
 import { colors } from './src/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -30,6 +31,7 @@ const queryClient = new QueryClient({
 export default function App() {
   const hydrate = useAuthStore((s) => s.hydrate);
   const isLoading = useAuthStore((s) => s.isLoading);
+  const hydrateRole = useAppStore((s) => s.hydrateRole);
 
   const [fontsLoaded] = useFonts({
     BarlowCondensed_700Bold,
@@ -41,6 +43,7 @@ export default function App() {
 
   useEffect(() => {
     hydrate();
+    hydrateRole();
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
@@ -62,6 +65,16 @@ export default function App() {
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <NavigationContainer
+            linking={{
+              prefixes: ['terminal://', 'https://terminal.app'],
+              config: {
+                screens: {
+                  Auth: 'auth',
+                  Main: 'main',
+                  ListingWizard: 'listings/new',
+                },
+              },
+            }}
             theme={{
               dark: true,
               colors: {

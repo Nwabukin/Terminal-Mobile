@@ -3,7 +3,7 @@ import type { Listing } from '../api/types';
 export type RenterStackParamList = {
   RenterHome: undefined;
   ListingDetail: { listingId: string };
-  RequestBooking: { listing: Listing };
+  RequestBooking: { listing?: Listing; listingId?: string };
   BookingDetail: { bookingId: string };
   Thread: { threadId: string };
 };
@@ -22,7 +22,7 @@ export type AuthStackParamList = {
 };
 
 export type OwnerTabParamList = {
-  Listings: undefined;
+  Dashboard: undefined;
   OwnerBookings: undefined;
   OwnerMessages: undefined;
   OwnerProfile: undefined;
@@ -31,4 +31,5 @@ export type OwnerTabParamList = {
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
+  ListingWizard: { listingId?: string } | undefined;
 };

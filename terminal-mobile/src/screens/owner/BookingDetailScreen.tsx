@@ -89,18 +89,17 @@ export function BookingDetailScreen() {
   };
 
   const handleDecline = () => {
-    Alert.prompt(
+    Alert.alert(
       'Decline this request',
-      'Provide an optional reason for the renter.',
+      'Are you sure you want to decline?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Decline',
           style: 'destructive',
-          onPress: (reason?: string) => declineMutation.mutate(reason ?? ''),
+          onPress: () => declineMutation.mutate(''),
         },
       ],
-      'plain-text',
     );
   };
 

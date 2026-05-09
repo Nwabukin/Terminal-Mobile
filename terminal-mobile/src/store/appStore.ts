@@ -1,29 +1,45 @@
 import { create } from 'zustand';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type UserRole = 'renter' | 'owner';
+type ActiveRole = 'renter' | 'owner';
 
 interface AppState {
-  role: UserRole;
-  toggleRole: () => void;
-  searchFilters: {
-    resourceType: string | null;
-    radiusKm: number;
-    availableOnly: boolean;
-  };
-  setSearchFilters: (filters: Partial<AppState['searchFilters']>) => void;
+  activeRole: ActiveRole;
+  setActiveRole: (role: ActiveRole) => Promise<void>;
+  hydrateRole: () => Promise<void>;
+  bookingStatusFilter: string | null;
+  setBookingStatusFilter: (status: string | null) => void;
+  searchResourceType: string | null;
+  setSearchResourceType: (type: string | null) => void;
+  searchRadius: number;
+  setSearchRadius: (radius: number) => void;
 }
 
+const ROLE_STORAGE_KEY = 'terminal_active_role';
+
 export const useAppStore = create<AppState>((set) => ({
-  role: 'renter',
-  toggleRole: () =>
-    set((state) => ({ role: state.role === 'renter' ? 'owner' : 'renter' })),
-  searchFilters: {
-    resourceType: null,
-    radiusKm: 50,
-    availableOnly: true,
+  activeRole: 'renter',
+
+  setActiveRole: async (role) => {
+    await AsyncStorage.setItem(ROLE_STORAGE_KEY, role);
+    set({ activeRole: role });
   },
-  setSearchFilters: (filters) =>
-    set((state) => ({
-      searchFilters: { ...state.searchFilters, ...filters },
-    })),
+
+  hydrateRole: async () => {
+    try {
+      const stored = await AsyncStorage.getItem(ROLE_STORAGE_KEY);
+      if (stored === 'renter' || stored === 'owner') {
+        set({ activeRole: stored });
+      }
+    } catch {
+      // Default to renter
+    }
+  },
+
+  bookingStatusFilter: null,
+  setBookingStatusFilter: (status) => set({ bookingStatusFilter: status }),
+  searchResourceType: null,
+  setSearchResourceType: (type) => set({ searchResourceType: type }),
+  searchRadius: 25,
+  setSearchRadius: (radius) => set({ searchRadius: radius }),
 }));
