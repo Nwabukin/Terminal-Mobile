@@ -1,20 +1,21 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleSheet, type ViewStyle } from 'react-native';
-import { colors, radii } from '../theme';
+import { colors, radii, spacing } from '../theme';
 
 interface LoadingSkeletonProps {
-  width: number | string;
-  height: number;
+  width?: number | string;
+  height?: number;
   borderRadius?: number;
   style?: ViewStyle;
+  count?: number;
 }
 
-export function LoadingSkeleton({
-  width,
-  height,
-  borderRadius = radii.default,
+function SkeletonItem({
+  width = '100%',
+  height = 72,
+  borderRadius = radii.card,
   style,
-}: LoadingSkeletonProps) {
+}: Omit<LoadingSkeletonProps, 'count'>) {
   const shimmerAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -35,14 +36,14 @@ export function LoadingSkeleton({
   return (
     <View
       style={[
-        styles.base,
-        { width: width as number, height, borderRadius },
+        skStyles.base,
+        { width: width as any, height, borderRadius },
         style,
       ]}
     >
       <Animated.View
         style={[
-          styles.shimmer,
+          skStyles.shimmer,
           { transform: [{ translateX }] },
         ]}
       />
@@ -50,7 +51,21 @@ export function LoadingSkeleton({
   );
 }
 
-const styles = StyleSheet.create({
+export function LoadingSkeleton({ count = 1, ...props }: LoadingSkeletonProps) {
+  return (
+    <View style={skStyles.container}>
+      {Array.from({ length: count }).map((_, i) => (
+        <SkeletonItem key={i} {...props} />
+      ))}
+    </View>
+  );
+}
+
+const skStyles = StyleSheet.create({
+  container: {
+    padding: spacing.lg,
+    gap: spacing.md,
+  },
   base: {
     backgroundColor: colors.surface,
     overflow: 'hidden',
