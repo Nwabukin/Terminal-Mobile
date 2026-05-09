@@ -1,46 +1,70 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../theme';
+import { colors, spacing } from '../theme';
+import { ResourceIcon } from './ResourceIcon';
+import { formatCurrency } from '../utils/format';
 
 interface MapPinProps {
-  price: string;
-  selected?: boolean;
-  icon?: React.ReactNode;
+  resourceType: 'equipment' | 'vehicle' | 'warehouse' | 'terminal' | 'facility';
+  priceDaily: string | null;
+  isSelected: boolean;
 }
 
-export function MapPin({ price, selected = false, icon }: MapPinProps) {
+export function MapPin({ resourceType, priceDaily, isSelected }: MapPinProps) {
+  const price = priceDaily ? parseFloat(priceDaily) : null;
+
   return (
-    <View style={[styles.pin, selected && styles.selected]}>
-      {icon}
-      <Text style={[styles.text, selected && styles.selectedText]}>{price}</Text>
+    <View
+      style={[
+        styles.container,
+        isSelected && styles.containerSelected,
+      ]}
+    >
+      <ResourceIcon
+        resourceType={resourceType}
+        size={14}
+        color={isSelected ? colors.white : colors.textSecondary}
+      />
+      {price !== null && (
+        <Text
+          style={[
+            styles.price,
+            isSelected && styles.priceSelected,
+          ]}
+          numberOfLines={1}
+        >
+          {formatCurrency(price)}
+        </Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  pin: {
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 999,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
   },
-  selected: {
+  containerSelected: {
     backgroundColor: colors.forge,
-    borderWidth: 2,
-    borderColor: colors.forgeLight,
+    borderColor: colors.forge,
     transform: [{ scale: 1.1 }],
+    zIndex: 10,
   },
-  text: {
-    fontSize: 11,
-    color: colors.textPrimary,
+  price: {
     fontFamily: 'IBMPlexMono_400Regular',
+    fontSize: 11,
+    lineHeight: 14,
+    color: colors.textPrimary,
   },
-  selectedText: {
+  priceSelected: {
     color: colors.white,
   },
 });

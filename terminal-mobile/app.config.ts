@@ -33,5 +33,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-secure-store',
     'expo-font',
     'expo-location',
+    [
+      '@rnmapbox/maps',
+      {
+        RNMapboxMapsVersion: '11.12.3',
+        RNMapboxMapsDownloadToken: process.env.MAPBOX_DOWNLOAD_TOKEN ?? '',
+      },
+    ],
   ],
 });

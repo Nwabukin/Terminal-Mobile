@@ -2,6 +2,9 @@ export const API_BASE_URL = __DEV__
   ? 'http://localhost:8000'
   : 'https://your-production-domain.railway.app';
 
+export const MAPBOX_ACCESS_TOKEN =
+  process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN ?? '';
+
 export const RESOURCE_TYPES = [
   { id: 'equipment', label: 'Equipment' },
   { id: 'vehicle', label: 'Vehicle' },

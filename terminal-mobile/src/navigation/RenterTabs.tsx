@@ -1,16 +1,40 @@
 import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { IconMap2, IconCalendar, IconMessage, IconUser } from '@tabler/icons-react-native';
-import { MapScreen } from '../screens/renter/MapScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  IconMap2,
+  IconCalendar,
+  IconMessage,
+  IconUser,
+} from '@tabler/icons-react-native';
+
+import MapScreen from '../screens/renter/MapScreen';
+import ListingDetailScreen from '../screens/renter/ListingDetailScreen';
 import { BookingsScreen } from '../screens/shared/BookingsScreen';
 import { ThreadListScreen } from '../screens/shared/ThreadListScreen';
 import { ProfileScreen } from '../screens/shared/ProfileScreen';
 import { colors, spacing } from '../theme';
-import type { RenterTabParamList } from './types';
 
-const Tab = createBottomTabNavigator<RenterTabParamList>();
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
-export function RenterTabs() {
+function RequestBookingPlaceholder() {
+  return (
+    <View style={phStyles.container}>
+      <Text style={phStyles.text}>REQUEST BOOKING</Text>
+      <Text style={phStyles.sub}>Coming in Wave 03</Text>
+    </View>
+  );
+}
+
+const phStyles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.abyss, justifyContent: 'center', alignItems: 'center' },
+  text: { fontFamily: 'BarlowCondensed_700Bold', fontSize: 28, color: colors.textPrimary, textTransform: 'uppercase' },
+  sub: { fontFamily: 'IBMPlexSans_400Regular', fontSize: 13, color: colors.textTertiary, marginTop: 8 },
+});
+
+function RenterTabsInner() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -23,11 +47,11 @@ export function RenterTabs() {
           paddingTop: spacing.xs,
         },
         tabBarActiveTintColor: colors.forge,
-        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarInactiveTintColor: colors.textTertiary,
         tabBarLabelStyle: {
+          fontFamily: 'IBMPlexSans_500Medium',
           fontSize: 10,
-          fontWeight: '500',
-          letterSpacing: 0.4,
+          lineHeight: 14,
         },
       }}
     >
@@ -35,30 +59,45 @@ export function RenterTabs() {
         name="Search"
         component={MapScreen}
         options={{
-          tabBarIcon: ({ color }) => <IconMap2 color={color} size={22} strokeWidth={1.5} />,
+          tabBarIcon: ({ color }) => <IconMap2 size={22} color={color} strokeWidth={1.5} />,
         }}
       />
       <Tab.Screen
         name="Bookings"
         component={BookingsScreen}
         options={{
-          tabBarIcon: ({ color }) => <IconCalendar color={color} size={22} strokeWidth={1.5} />,
+          tabBarIcon: ({ color }) => <IconCalendar size={22} color={color} strokeWidth={1.5} />,
         }}
       />
       <Tab.Screen
         name="Messages"
         component={ThreadListScreen}
         options={{
-          tabBarIcon: ({ color }) => <IconMessage color={color} size={22} strokeWidth={1.5} />,
+          tabBarIcon: ({ color }) => <IconMessage size={22} color={color} strokeWidth={1.5} />,
         }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarIcon: ({ color }) => <IconUser color={color} size={22} strokeWidth={1.5} />,
+          tabBarIcon: ({ color }) => <IconUser size={22} color={color} strokeWidth={1.5} />,
         }}
       />
     </Tab.Navigator>
+  );
+}
+
+export function RenterTabs() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.abyss },
+      }}
+    >
+      <Stack.Screen name="RenterHome" component={RenterTabsInner} />
+      <Stack.Screen name="ListingDetail" component={ListingDetailScreen} />
+      <Stack.Screen name="RequestBooking" component={RequestBookingPlaceholder} />
+    </Stack.Navigator>
   );
 }
