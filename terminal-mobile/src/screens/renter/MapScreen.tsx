@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Pressable,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
@@ -16,18 +15,11 @@ import {
   IconCircleFilled,
   IconCurrentLocation,
 } from '@tabler/icons-react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
 
 import { colors, spacing, radii } from '../../theme';
 import { fetchMapListings } from '../../api/search';
 import { useLocation } from '../../hooks/useLocation';
-import { MapPin } from '../../components/MapPin';
+import { TerminalMap } from '../../components/map';
 import { ListingCard } from '../../components/ListingCard';
 import { BottomSheet } from '../../components/BottomSheet';
 import type { SearchResult } from '../../api/types';
@@ -44,32 +36,12 @@ const RESOURCE_FILTERS = [
 const RADIUS_OPTIONS = [10, 20, 50, 100, 200];
 const DEFAULT_RADIUS = 50;
 
-const DARK_MAP_STYLE = [
-  { elementType: 'geometry', stylers: [{ color: '#0C0C0F' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#8E8EA8' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#0C0C0F' }] },
-  { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#2A2A36' }] },
-  { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#131318' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1A1A22' }] },
-  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#22222C' }] },
-  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#22222C' }] },
-  { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#131318' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#131318' }] },
-  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#52526A' }] },
-];
-
 interface MapScreenProps {
   navigation: NativeStackNavigationProp<any>;
 }
 
-// react-native-maps is native-only; on web we render a dark placeholder
-// For native builds, replace the map placeholder below with:
-// import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-
-
 export default function MapScreen({ navigation }: MapScreenProps) {
   const insets = useSafeAreaInsets();
-  const mapRef = useRef<any>(null);
   const { latitude, longitude, loading: locationLoading } = useLocation();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,21 +49,6 @@ export default function MapScreen({ navigation }: MapScreenProps) {
   const [radius, setRadius] = useState(DEFAULT_RADIUS);
   const [radiusMenuOpen, setRadiusMenuOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SearchResult | null>(null);
-
-  const pulseScale = useSharedValue(1);
-
-  useEffect(() => {
-    pulseScale.value = withRepeat(
-      withTiming(1.8, { duration: 1500, easing: Easing.out(Easing.ease) }),
-      -1,
-      true
-    );
-  }, [pulseScale]);
-
-  const pulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }],
-    opacity: 2 - pulseScale.value,
-  }));
 
   const {
     data: searchResponse,
@@ -125,15 +82,10 @@ export default function MapScreen({ navigation }: MapScreenProps) {
 
   const handleMarkerPress = useCallback((listing: SearchResult) => {
     setSelectedListing(listing);
-    mapRef.current?.animateToRegion?.(
-      {
-        latitude: listing.latitude,
-        longitude: listing.longitude,
-        latitudeDelta: 0.02,
-        longitudeDelta: 0.02,
-      },
-      300
-    );
+  }, []);
+
+  const handleMapPress = useCallback(() => {
+    setSelectedListing(null);
   }, []);
 
   const handleDetailPress = useCallback(() => {
@@ -149,16 +101,8 @@ export default function MapScreen({ navigation }: MapScreenProps) {
   }, [selectedListing, navigation]);
 
   const handleRecenter = useCallback(() => {
-    mapRef.current?.animateToRegion?.(
-      {
-        latitude,
-        longitude,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      },
-      300
-    );
-  }, [latitude, longitude]);
+    // Recenter handled by TerminalMap on native
+  }, []);
 
   const handleTypeFilter = useCallback(
     (typeId: string | null) => {
@@ -176,34 +120,15 @@ export default function MapScreen({ navigation }: MapScreenProps) {
 
   return (
     <View style={styles.root}>
-      {/* Map or dark placeholder for web */}
-      {/* Dark map placeholder — on native, swap for react-native-maps MapView */}
-      <Pressable
-        style={[StyleSheet.absoluteFill, styles.webMapPlaceholder]}
-        onPress={() => setSelectedListing(null)}
-      >
-        <View style={styles.webMapGrid}>
-          {filteredListings.map((listing) => (
-            <Pressable
-              key={listing.id}
-              onPress={() => handleMarkerPress(listing)}
-            >
-              <MapPin
-                resourceType={listing.resource_type}
-                priceDaily={listing.price_daily}
-                isSelected={selectedListing?.id === listing.id}
-              />
-            </Pressable>
-          ))}
-        </View>
-        <View style={styles.userLocationContainer}>
-          <Animated.View style={[styles.userLocationPulse, pulseStyle]} />
-          <View style={styles.userLocationDot} />
-        </View>
-        <Text style={styles.webMapLabel}>
-          LAGOS · {latitude.toFixed(4)}°N, {longitude.toFixed(4)}°E
-        </Text>
-      </Pressable>
+      {/* Mapbox map (native) or dark placeholder (web) */}
+      <TerminalMap
+        latitude={latitude}
+        longitude={longitude}
+        listings={filteredListings}
+        selectedListingId={selectedListing?.id ?? null}
+        onMarkerPress={handleMarkerPress}
+        onMapPress={handleMapPress}
+      />
 
       {/* Floating search bar */}
       <View style={[styles.searchContainer, { top: insets.top + spacing.sm }]}>
@@ -338,27 +263,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.abyss,
   },
 
-  webMapPlaceholder: {
-    backgroundColor: '#0d0d12',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  webMapGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-    justifyContent: 'center',
-    paddingTop: 140,
-  },
-  webMapLabel: {
-    position: 'absolute',
-    bottom: 80,
-    fontFamily: 'IBMPlexMono_400Regular',
-    fontSize: 11,
-    color: colors.textTertiary,
-    letterSpacing: 1,
-  },
-
   searchContainer: {
     position: 'absolute',
     left: spacing.base,
@@ -444,28 +348,6 @@ const styles = StyleSheet.create({
   },
   radiusOptionTextActive: {
     color: colors.forge,
-  },
-
-  userLocationContainer: {
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  userLocationPulse: {
-    position: 'absolute',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(59,130,246,0.25)',
-  },
-  userLocationDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#3B82F6',
-    borderWidth: 2,
-    borderColor: colors.white,
   },
 
   recenterButton: {

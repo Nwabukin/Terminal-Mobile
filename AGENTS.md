@@ -26,10 +26,19 @@ The design system source files live in `/workspace/project/` and are symlinked a
 - `project/colors_and_type.css` — canonical CSS token file
 - `project/ui_kits/mobile_app/` — JSX reference implementation of 7 core screens
 
+### Mapbox setup
+
+The app uses `@rnmapbox/maps` (not `react-native-maps`). Two tokens are required:
+- **`MAPBOX_DOWNLOAD_TOKEN`** — secret token with `DOWNLOADS:READ` scope, used at build time by the Expo config plugin to download the Mapbox SDK. Set as an env var or in `.env`.
+- **`EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN`** — public token (starts with `pk.ey`), used at runtime for map rendering. Set as env var so Expo exposes it via `process.env`.
+
+The map component is platform-split: `src/components/map/TerminalMap.native.tsx` uses actual Mapbox on native, while `src/components/map/TerminalMap.tsx` renders a dark placeholder on web. Native builds require `expo prebuild --clean` since `@rnmapbox/maps` has custom native code (Expo Go is not supported).
+
 ### Gotchas
 
 - The backend API (`Nwa-dev/Terminal` on GitHub) is a separate private Django REST repo. It is **not** included in this workspace. API calls will fail without it; the app still loads and renders UI.
 - `@tabler/icons-react-native` uses `strokeWidth` (not `stroke`) for icon stroke width. `stroke` maps to `SvgProps.stroke` which expects a `ColorValue`.
+- `@tabler/icons-react-native` barrel export causes TypeScript stack overflow at default stack size. Run `npx tsc --noEmit` with `--stack-size=16384` flag, or use `npx expo export --platform web` to verify the build instead.
 - Expo web mode requires `react-dom` and `react-native-web` — both are installed.
 - The app uses `expo-splash-screen` for splash screen management; it must be explicitly installed (not bundled by default with the blank template).
 - Currency is Nigerian Naira (`₦`). Use `formatCurrency()` from `src/utils/format.ts`.
