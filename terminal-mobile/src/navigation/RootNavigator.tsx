@@ -12,7 +12,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const user = useAuthStore((s) => s.user);
   const activeRole = useAppStore((s) => s.activeRole);
   const hydrateRole = useAppStore((s) => s.hydrateRole);
 

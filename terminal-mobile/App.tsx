@@ -69,19 +69,9 @@ export default function App() {
               prefixes: ['terminal://', 'https://terminal.app'],
               config: {
                 screens: {
-                  Main: {
-                    screens: {
-                      Search: 'search',
-                      Bookings: 'bookings',
-                      Messages: 'messages',
-                      Profile: 'profile',
-                      Dashboard: 'dashboard',
-                    },
-                  },
+                  Auth: 'auth',
+                  Main: 'main',
                   ListingWizard: 'listings/new',
-                  ListingDetail: 'listings/:listingId',
-                  BookingDetail: 'bookings/:bookingId',
-                  Thread: 'messages/:threadId',
                 },
               },
             }}

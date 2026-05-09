@@ -9,11 +9,11 @@ import {
   Dimensions,
   FlatList,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   IconArrowLeft,
   IconMapPin,
@@ -26,25 +26,18 @@ import {
 
 import { colors, typeScale, spacing, radii } from '../../theme';
 import { fetchListingDetail } from '../../api/listings';
+import { createInquiryThread } from '../../api/messaging';
 import { ResourceIcon } from '../../components/ResourceIcon';
 import { formatCurrency } from '../../utils/format';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RouteProp } from '@react-navigation/native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HERO_HEIGHT = (SCREEN_WIDTH * 10) / 16;
 
-interface ListingDetailScreenProps {
-  navigation: NativeStackNavigationProp<any>;
-  route: RouteProp<{ ListingDetail: { listingId: string } }, 'ListingDetail'>;
-}
-
-export default function ListingDetailScreen({
-  navigation,
-  route,
-}: ListingDetailScreenProps) {
+export default function ListingDetailScreen() {
+  const navigation = useNavigation<any>();
+  const route = useRoute<any>();
   const insets = useSafeAreaInsets();
-  const { listingId } = route.params;
+  const { listingId } = route.params as { listingId: string };
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
 
   const {
@@ -70,18 +63,24 @@ export default function ListingDetailScreen({
     navigation.goBack();
   }, [navigation]);
 
-  const handleMessage = useCallback(() => {
-    if (listing) {
-      navigation.navigate('Thread', {
-        listingId: listing.id,
-        ownerId: listing.owner.id,
+  const handleMessage = useCallback(async () => {
+    if (!listing) return;
+    try {
+      const result = await createInquiryThread({
+        listing_id: listing.id,
+        initial_message: `Inquiry about ${listing.title}`,
       });
+      if (result.data?.id) {
+        navigation.navigate('Thread', { threadId: result.data.id });
+      }
+    } catch {
+      navigation.navigate('Thread', { threadId: listing.id });
     }
   }, [listing, navigation]);
 
   const handleRequestBooking = useCallback(() => {
     if (listing) {
-      navigation.navigate('RequestBooking', { listingId: listing.id });
+      navigation.navigate('RequestBooking', { listing });
     }
   }, [listing, navigation]);
 

@@ -61,6 +61,33 @@ export function LoadingSkeleton({ count = 1, ...props }: LoadingSkeletonProps) {
   );
 }
 
+export function SkeletonCard() {
+  return (
+    <View style={skStyles.card}>
+      <SkeletonItem width="100%" height={120} borderRadius={radii.card} />
+      <View style={{ marginTop: 12 }}>
+        <SkeletonItem width="70%" height={16} />
+        <SkeletonItem width="40%" height={14} style={{ marginTop: 8 }} />
+      </View>
+    </View>
+  );
+}
+
+export function SkeletonRow({ lines = 3 }: { lines?: number }) {
+  return (
+    <View style={skStyles.row}>
+      {Array.from({ length: lines }).map((_, i) => (
+        <SkeletonItem
+          key={i}
+          width={i === lines - 1 ? '60%' : '100%'}
+          height={14}
+          style={{ marginBottom: 8 }}
+        />
+      ))}
+    </View>
+  );
+}
+
 const skStyles = StyleSheet.create({
   container: {
     padding: spacing.lg,
@@ -74,5 +101,17 @@ const skStyles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: colors.surfaceHigh,
     opacity: 0.5,
+  },
+  card: {
+    backgroundColor: colors.surface,
+    borderRadius: radii.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 12,
+    marginBottom: 12,
+  },
+  row: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
   },
 });

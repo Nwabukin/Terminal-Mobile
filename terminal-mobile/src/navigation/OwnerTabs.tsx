@@ -75,7 +75,7 @@ export function OwnerTabs() {
       }}
     >
       <Tab.Screen
-        name="Listings"
+        name="Dashboard"
         component={OwnerDashboardScreen}
         options={{
           tabBarIcon: ({ color, focused }) => (

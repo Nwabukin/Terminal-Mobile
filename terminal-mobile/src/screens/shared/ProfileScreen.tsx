@@ -14,7 +14,7 @@ import * as ImagePicker from 'expo-image-picker';
 import {
   IconCheck,
   IconClock,
-  IconUpload,
+
   IconChevronRight,
   IconLogout,
 } from '@tabler/icons-react-native';
