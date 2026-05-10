@@ -38,7 +38,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       '@rnmapbox/maps',
       {
         RNMapboxMapsVersion: '11.12.3',
-        RNMapboxMapsDownloadToken: process.env.MAPBOX_DOWNLOAD_TOKEN ?? '',
+        // EAS injects RNMAPBOX_MAPS_DOWNLOAD_TOKEN; local dev may use MAPBOX_DOWNLOAD_TOKEN.
+        RNMapboxMapsDownloadToken:
+          process.env.RNMAPBOX_MAPS_DOWNLOAD_TOKEN ??
+          process.env.MAPBOX_DOWNLOAD_TOKEN ??
+          '',
       },
     ],
   ],
