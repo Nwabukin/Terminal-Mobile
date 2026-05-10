@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 18.11.0",
+    "version": ">= 18.0.0",
     "appVersionSource": "remote"
   },
   "build": {
@@ -8,19 +8,26 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "NODE_ENV": "development"
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "NODE_ENV": "production"
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
+      }
+    },
+    "preview-simulator": {
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
       }
     },
     "production": {
-      "autoIncrement": true,
       "env": {
-        "NODE_ENV": "production"
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
       }
     }
   },
