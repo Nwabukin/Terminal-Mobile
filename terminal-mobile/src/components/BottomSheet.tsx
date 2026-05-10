@@ -74,17 +74,22 @@ export function BottomSheet({
       [1, 0],
       Extrapolation.CLAMP
     ),
-    pointerEvents: visible ? ('auto' as const) : ('none' as const),
   }));
 
   return (
     <>
-      <Animated.View style={[styles.backdrop, backdropStyle]}>
+      <Animated.View
+        style={[styles.backdrop, backdropStyle]}
+        pointerEvents={visible ? 'auto' : 'none'}
+      >
         <Pressable style={StyleSheet.absoluteFill} onPress={dismiss} />
       </Animated.View>
 
       <GestureDetector gesture={gesture}>
-        <Animated.View style={[styles.sheet, { height }, sheetStyle]}>
+        <Animated.View
+          style={[styles.sheet, { height }, sheetStyle]}
+          pointerEvents={visible ? 'auto' : 'none'}
+        >
           <View style={styles.handle} />
           {children}
         </Animated.View>

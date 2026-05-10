@@ -29,6 +29,12 @@
     "plugins": [
       "expo-secure-store",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "8932e6ce-483d-47bb-8af8-7872bfea26d1"
+      }
+    },
+    "owner": "nwa_dev"
   }
 }

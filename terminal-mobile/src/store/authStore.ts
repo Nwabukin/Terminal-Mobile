@@ -1,5 +1,7 @@
 import { create } from 'zustand';
+import { isAxiosError } from 'axios';
 import { getItem, setItem, deleteItem } from '../utils/storage';
+import { fetchMe } from '../api/users';
 import type { User, AuthTokens } from '../api/types';
 
 interface AuthState {
@@ -33,10 +35,28 @@ export const useAuthStore = create<AuthState>((set) => ({
   hydrate: async () => {
     try {
       const token = await getItem('access_token');
-      if (token) {
-        set({ isAuthenticated: true, isLoading: false });
-      } else {
+      if (!token) {
         set({ isLoading: false });
+        return;
+      }
+      try {
+        const me = await fetchMe();
+        if (me?.data) {
+          set({ user: me.data, isAuthenticated: true, isLoading: false });
+        } else {
+          await deleteItem('access_token');
+          await deleteItem('refresh_token');
+          set({ user: null, isAuthenticated: false, isLoading: false });
+        }
+      } catch (e: unknown) {
+        const status = isAxiosError(e) ? e.response?.status : undefined;
+        if (status === 401 || status === 403) {
+          await deleteItem('access_token');
+          await deleteItem('refresh_token');
+          set({ user: null, isAuthenticated: false, isLoading: false });
+        } else {
+          set({ isAuthenticated: true, isLoading: false });
+        }
       }
     } catch {
       set({ isLoading: false });
