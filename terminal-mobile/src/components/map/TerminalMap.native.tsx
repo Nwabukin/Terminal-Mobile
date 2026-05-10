@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import Animated, {
   useSharedValue,
@@ -56,6 +56,8 @@ export function TerminalMap({
       logoEnabled={false}
       compassEnabled={false}
       scaleBarEnabled={false}
+      // GLSurfaceView (surfaceView default) often stays black under React Navigation + edge-to-edge; TextureView works.
+      {...(Platform.OS === 'android' ? { surfaceView: false } : {})}
     >
       <Mapbox.Camera
         ref={cameraRef}
