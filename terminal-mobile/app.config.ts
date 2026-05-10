@@ -37,7 +37,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       '@rnmapbox/maps',
       {
-        RNMapboxMapsVersion: '11.12.3',
+        // Must match @rnmapbox/maps package.json `mapbox.android` for this release (SDK APIs used by Kotlin sources).
+        RNMapboxMapsVersion: '11.18.2',
         // EAS injects RNMAPBOX_MAPS_DOWNLOAD_TOKEN; local dev may use MAPBOX_DOWNLOAD_TOKEN.
         RNMapboxMapsDownloadToken:
           process.env.RNMAPBOX_MAPS_DOWNLOAD_TOKEN ??
