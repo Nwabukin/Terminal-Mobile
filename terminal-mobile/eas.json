@@ -7,33 +7,22 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "env": {
-        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
-      }
+      "environment": "production"
     },
     "preview": {
       "distribution": "internal",
       "environment": "production",
       "android": {
         "buildType": "apk"
-      },
-      "env": {
-        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
       }
     },
     "preview-simulator": {
+      "environment": "production",
       "ios": {
         "simulator": true
-      },
-      "env": {
-        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
       }
     },
-    "production": {
-      "env": {
-        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
-      }
-    }
+    "production": {}
   },
   "submit": {
     "production": {}

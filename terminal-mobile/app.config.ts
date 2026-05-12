@@ -30,21 +30,5 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     favicon: './assets/favicon.png',
   },
-  plugins: [
-    'expo-secure-store',
-    'expo-font',
-    'expo-location',
-    [
-      '@rnmapbox/maps',
-      {
-        // Must match @rnmapbox/maps package.json `mapbox.android` for this release (SDK APIs used by Kotlin sources).
-        RNMapboxMapsVersion: '11.18.2',
-        // EAS injects RNMAPBOX_MAPS_DOWNLOAD_TOKEN; local dev may use MAPBOX_DOWNLOAD_TOKEN.
-        RNMapboxMapsDownloadToken:
-          process.env.RNMAPBOX_MAPS_DOWNLOAD_TOKEN ??
-          process.env.MAPBOX_DOWNLOAD_TOKEN ??
-          '',
-      },
-    ],
-  ],
+  plugins: ['expo-secure-store', 'expo-font', 'expo-location', '@maplibre/maplibre-react-native'],
 });

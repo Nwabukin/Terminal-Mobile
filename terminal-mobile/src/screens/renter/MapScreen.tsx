@@ -120,7 +120,7 @@ export default function MapScreen({ navigation }: MapScreenProps) {
 
   return (
     <View style={styles.root}>
-      {/* Mapbox map (native) or dark placeholder (web) */}
+      {/* MapLibre + OSM/CARTO tiles (native) or dark placeholder (web) */}
       <TerminalMap
         latitude={latitude}
         longitude={longitude}
