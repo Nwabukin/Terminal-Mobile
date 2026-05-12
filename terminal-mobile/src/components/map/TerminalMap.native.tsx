@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
-import MapView, { Marker, MapPressEvent, PROVIDER_GOOGLE } from 'react-native-maps';
+import { StyleSheet, View, type NativeSyntheticEvent } from 'react-native';
+import { Map, Camera, Marker, type PressEvent } from '@maplibre/maplibre-react-native';
 
 import { colors } from '../../theme';
 import { MapPin } from '../MapPin';
 import type { TerminalMapProps } from './types';
-import { GOOGLE_DARK_MAP_STYLE } from './googleDarkMapStyle';
+import { TERMINAL_MAPLIBRE_STYLE } from './terminalMaplibreStyle';
 
 export function TerminalMap({
   latitude,
@@ -15,46 +15,39 @@ export function TerminalMap({
   onMarkerPress,
   onMapPress,
 }: TerminalMapProps) {
-  const initialCamera = useMemo(
-    () => ({
-      center: { latitude, longitude },
-      pitch: 0,
-      heading: 0,
-      zoom: 11,
-    }),
+  const userLngLat = useMemo(
+    (): [number, number] => [longitude, latitude],
     [latitude, longitude],
   );
 
   const handleMapPress = useCallback(
-    (e: MapPressEvent) => {
-      if (e.nativeEvent.action === 'marker-press') {
-        return;
-      }
+    (_e: NativeSyntheticEvent<PressEvent>) => {
       onMapPress();
     },
     [onMapPress],
   );
 
   return (
-    <MapView
+    <Map
       style={StyleSheet.absoluteFill}
-      provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
-      initialCamera={initialCamera}
+      mapStyle={TERMINAL_MAPLIBRE_STYLE}
       onPress={handleMapPress}
-      customMapStyle={Platform.OS === 'android' ? GOOGLE_DARK_MAP_STYLE : undefined}
-      userInterfaceStyle="dark"
-      rotateEnabled
-      pitchEnabled={false}
-      showsCompass={false}
-      toolbarEnabled={false}
-      mapType="standard"
+      androidView="texture"
+      touchPitch={false}
+      compass={false}
+      scaleBar={false}
     >
-      <Marker
-        coordinate={{ latitude, longitude }}
-        anchor={{ x: 0.5, y: 0.5 }}
-        tracksViewChanges={false}
-        zIndex={1}
-      >
+      <Camera
+        key={`${latitude.toFixed(5)}-${longitude.toFixed(5)}`}
+        initialViewState={{
+          center: userLngLat,
+          zoom: 11,
+          pitch: 0,
+          bearing: 0,
+        }}
+      />
+
+      <Marker id="user-location" lngLat={userLngLat} anchor="center">
         <View style={styles.userLocationContainer}>
           <View style={styles.userLocationPulse} />
           <View style={styles.userLocationDot} />
@@ -64,14 +57,10 @@ export function TerminalMap({
       {listings.map((listing) => (
         <Marker
           key={listing.id}
-          coordinate={{
-            latitude: listing.latitude,
-            longitude: listing.longitude,
-          }}
-          anchor={{ x: 0.5, y: 1 }}
-          tracksViewChanges
+          id={listing.id}
+          lngLat={[listing.longitude, listing.latitude]}
+          anchor="bottom"
           onPress={() => onMarkerPress(listing)}
-          zIndex={selectedListingId === listing.id ? 3 : 2}
         >
           <MapPin
             resourceType={listing.resource_type}
@@ -80,7 +69,7 @@ export function TerminalMap({
           />
         </Marker>
       ))}
-    </MapView>
+    </Map>
   );
 }
 

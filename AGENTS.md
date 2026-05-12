@@ -28,7 +28,7 @@ Test account: `testmobile@terminal.app` / `TestPass123!`
 
 ### Maps setup
 
-Native map uses **`react-native-maps`** (Google Maps on Android, Apple MapKit on iOS). Set **`EXPO_PUBLIC_GOOGLE_MAPS_API_KEY`** in EAS (and locally in `.env` if needed) — a Google Cloud key with **Maps SDK for Android** and **Maps SDK for iOS** enabled. The key is injected via `app.config.ts` into `android.config.googleMaps.apiKey` and `ios.config.googleMapsApiKey`.
+Native map uses **`@maplibre/maplibre-react-native`** with a bundled **dark raster style** (CARTO `dark_all` tiles, OSM data). **No Google Maps billing or API keys** are required. The Expo config plugin `@maplibre/maplibre-react-native` is listed in `app.config.ts` `plugins` for native prebuilds.
 
 Web uses `TerminalMap.tsx` (non-interactive dark placeholder, no API key).
 
