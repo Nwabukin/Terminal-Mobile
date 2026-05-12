@@ -57,11 +57,16 @@ export function TerminalMap({
   );
 
   const cameraRef = useRef<CameraRef>(null);
+  /** After a marker touch, MapLibre often still emits a map onPress; skip dismiss briefly. */
+  const blockBackgroundMapPressUntilRef = useRef(0);
   const [mapReady, setMapReady] = useState(false);
   const cameraTargetKey = useMemo(() => listingsCameraKey(listings), [listings]);
 
   const handleMapPress = useCallback(
     (_e: NativeSyntheticEvent<PressEvent>) => {
+      if (Date.now() < blockBackgroundMapPressUntilRef.current) {
+        return;
+      }
       onMapPress();
     },
     [onMapPress],
@@ -133,6 +138,9 @@ export function TerminalMap({
             accessibilityRole="button"
             accessibilityLabel={`Open listing ${listing.title}`}
             hitSlop={12}
+            onPressIn={() => {
+              blockBackgroundMapPressUntilRef.current = Date.now() + 500;
+            }}
             onPress={() => onMarkerPress(listing)}
             style={styles.pinPressable}
           >

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -36,6 +36,8 @@ const RESOURCE_FILTERS = [
 const RADIUS_OPTIONS = [10, 20, 50, 100, 200];
 const DEFAULT_RADIUS = 50;
 const MAP_SEARCH_DEBOUNCE_MS = 400;
+
+const EMPTY_MAP_LISTINGS: SearchResult[] = [];
 
 interface MapScreenProps {
   navigation: NativeStackNavigationProp<any>;
@@ -78,14 +80,21 @@ export default function MapScreen({ navigation }: MapScreenProps) {
     staleTime: 30_000,
   });
 
-  const listings = searchResponse?.data ?? [];
+  const listings = searchResponse?.data ?? EMPTY_MAP_LISTINGS;
+
+  const listingIdsKey = useMemo(
+    () => listings.map((l) => l.id).join(','),
+    [listings],
+  );
 
   useEffect(() => {
+    const data = searchResponse?.data;
+    if (!data) return;
     setSelectedListing((prev) => {
       if (!prev) return null;
-      return listings.find((l) => l.id === prev.id) ?? null;
+      return data.find((l) => l.id === prev.id) ?? null;
     });
-  }, [listings]);
+  }, [listingIdsKey, searchResponse?.data]);
 
   const handleMarkerPress = useCallback((listing: SearchResult) => {
     setSelectedListing(listing);
