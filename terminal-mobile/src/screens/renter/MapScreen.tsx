@@ -136,7 +136,7 @@ export default function MapScreen({ navigation }: MapScreenProps) {
           <IconSearch size={18} color={colors.textTertiary} strokeWidth={1.5} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search Lagos..."
+            placeholder="Filter pins (title, category, city)…"
             placeholderTextColor={colors.textTertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
