@@ -54,17 +54,28 @@ const DURATION_OPTIONS: DurationOption[] = [
   { type: 'monthly', label: 'Monthly', priceKey: 'price_monthly', unitLabel: '/month' },
 ];
 
+const WINDOW_HEIGHT = Dimensions.get('window').height;
+/** Sheet needs a bounded height so a flex:1 ScrollView between header and footer does not collapse to zero. */
+const SHEET_HEIGHT = Math.round(WINDOW_HEIGHT * 0.88);
+
 export function RequestBookingScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute<any>();
-  const listingId: string = route.params?.listingId;
+  const routeListing = route.params?.listing as Listing | undefined;
+  const listingId: string | undefined = routeListing?.id ?? route.params?.listingId;
 
-  const { data: listing } = useQuery({
+  const {
+    data: fetchedListing,
+    isLoading: listingLoading,
+    isError: listingError,
+  } = useQuery({
     queryKey: ['listing', listingId],
-    queryFn: () => fetchListingDetail(listingId),
+    queryFn: () => fetchListingDetail(listingId!),
     enabled: !!listingId,
   });
+
+  const listing = fetchedListing ?? routeListing;
 
   const [step, setStep] = useState(1);
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -300,11 +311,35 @@ export function RequestBookingScreen() {
     </View>
   );
 
+  if (!listingId) {
+    return (
+      <View style={s.backdrop}>
+        <Pressable style={s.backdropTouchable} onPress={() => navigation.goBack()} />
+        <View style={[s.sheet, { height: SHEET_HEIGHT, paddingBottom: insets.bottom + spacing.base }]}>
+          <View style={s.header}>
+            <Pressable onPress={() => navigation.goBack()}>
+              <Text style={s.backArrow}>{'\u2190'}</Text>
+            </Pressable>
+          </View>
+          <View style={s.missingListingBody}>
+            <Text style={s.stepHeading}>Could not open booking</Text>
+            <Text style={s.missingListingHint}>Go back and try again from the listing.</Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={s.backdrop}>
-      <Pressable style={s.backdropClose} onPress={() => navigation.goBack()} />
+      <Pressable style={s.backdropTouchable} onPress={() => navigation.goBack()} />
 
-      <View style={[s.sheet, { paddingBottom: insets.bottom + spacing.base }]}>
+      <View
+        style={[
+          s.sheet,
+          { height: SHEET_HEIGHT, paddingBottom: insets.bottom + spacing.base },
+        ]}
+      >
         {/* Progress bar */}
         <View style={s.progressTrack}>
           <View style={[s.progressFill, { width: `${(step / TOTAL_STEPS) * 100}%` }]} />
@@ -329,6 +364,11 @@ export function RequestBookingScreen() {
           contentContainerStyle={s.bodyContent}
           showsVerticalScrollIndicator={false}
         >
+          {listingError ? (
+            <Text style={s.errorText}>Could not load this listing. Pull back and try again.</Text>
+          ) : listingLoading && !listing ? (
+            <Text style={s.loadingHint}>Loading listing…</Text>
+          ) : null}
           {step === 1 && renderCalendar()}
           {step === 2 && renderDuration()}
           {step === 3 && renderReview()}
@@ -361,14 +401,34 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'flex-end',
   },
-  backdropClose: {
-    flex: 1,
+  backdropTouchable: {
+    ...StyleSheet.absoluteFillObject,
   },
   sheet: {
+    flexDirection: 'column',
     backgroundColor: colors.abyss,
     borderTopLeftRadius: radii.sheet,
     borderTopRightRadius: radii.sheet,
-    maxHeight: '92%',
+  },
+  missingListingBody: {
+    flex: 1,
+    paddingHorizontal: screenPadding.horizontal,
+    paddingTop: spacing.lg,
+  },
+  missingListingHint: {
+    ...typeScale.body2,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+  },
+  loadingHint: {
+    ...typeScale.body2,
+    color: colors.textSecondary,
+    marginBottom: spacing.md,
+  },
+  errorText: {
+    ...typeScale.body2,
+    color: colors.forgeLight,
+    marginBottom: spacing.md,
   },
   progressTrack: {
     height: 2,

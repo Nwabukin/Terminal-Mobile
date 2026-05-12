@@ -9,10 +9,11 @@ import {
   Dimensions,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   IconArrowLeft,
@@ -36,6 +37,7 @@ const HERO_HEIGHT = (SCREEN_WIDTH * 10) / 16;
 export default function ListingDetailScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
   const { listingId } = route.params as { listingId: string };
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
@@ -70,13 +72,22 @@ export default function ListingDetailScreen() {
         listing_id: listing.id,
         initial_message: `Inquiry about ${listing.title}`,
       });
-      if (result.data?.id) {
+      if (result.success && result.data?.id) {
+        await queryClient.invalidateQueries({ queryKey: ['threads'] });
         navigation.navigate('Thread', { threadId: result.data.id });
+      } else {
+        Alert.alert(
+          'Could not start chat',
+          result.message ?? 'Please try again in a moment.',
+        );
       }
     } catch {
-      navigation.navigate('Thread', { threadId: listing.id });
+      Alert.alert(
+        'Could not start chat',
+        'Check your connection and try again.',
+      );
     }
-  }, [listing, navigation]);
+  }, [listing, navigation, queryClient]);
 
   const handleRequestBooking = useCallback(() => {
     if (listing) {
