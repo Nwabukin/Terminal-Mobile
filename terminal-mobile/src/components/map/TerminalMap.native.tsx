@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { StyleSheet, View, type NativeSyntheticEvent } from 'react-native';
+import { Pressable, StyleSheet, View, type NativeSyntheticEvent } from 'react-native';
 import { Map, Camera, Marker, type PressEvent } from '@maplibre/maplibre-react-native';
 
 import { colors } from '../../theme';
@@ -47,33 +47,53 @@ export function TerminalMap({
         }}
       />
 
-      <Marker id="user-location" lngLat={userLngLat} anchor="center">
-        <View style={styles.userLocationContainer}>
-          <View style={styles.userLocationPulse} />
-          <View style={styles.userLocationDot} />
-        </View>
-      </Marker>
-
+      {/*
+        Listing markers must come before the user marker: on Android, MapLibre's
+        hit test walks markers in registration order and returns the first match.
+        Registering the user dot first could steal taps when hit rects overlap.
+      */}
       {listings.map((listing) => (
         <Marker
           key={listing.id}
           id={listing.id}
           lngLat={[listing.longitude, listing.latitude]}
           anchor="bottom"
-          onPress={() => onMarkerPress(listing)}
+          style={{ zIndex: selectedListingId === listing.id ? 20 : 10 }}
         >
-          <MapPin
-            resourceType={listing.resource_type}
-            priceDaily={listing.price_daily}
-            isSelected={selectedListingId === listing.id}
-          />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Open listing ${listing.title}`}
+            hitSlop={12}
+            onPress={() => onMarkerPress(listing)}
+            style={styles.pinPressable}
+          >
+            <MapPin
+              resourceType={listing.resource_type}
+              priceDaily={listing.price_daily}
+              isSelected={selectedListingId === listing.id}
+            />
+          </Pressable>
         </Marker>
       ))}
+
+      <Marker id="user-location" lngLat={userLngLat} anchor="center" style={{ zIndex: 30 }}>
+        <View style={styles.userLocationContainer}>
+          <View style={styles.userLocationPulse} />
+          <View style={styles.userLocationDot} />
+        </View>
+      </Marker>
     </Map>
   );
 }
 
 const styles = StyleSheet.create({
+  pinPressable: {
+    minWidth: 44,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+  },
   userLocationContainer: {
     width: 24,
     height: 24,
