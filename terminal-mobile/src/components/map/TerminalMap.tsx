@@ -81,8 +81,7 @@ export function TerminalMap({
         LAGOS · {latitude.toFixed(4)}°N, {longitude.toFixed(4)}°E
       </Text>
 
-      {/* Mapbox attribution */}
-      <Text style={styles.attribution}>Mapbox · web preview</Text>
+      <Text style={styles.attribution}>Maps · web preview</Text>
     </Pressable>
   );
 }

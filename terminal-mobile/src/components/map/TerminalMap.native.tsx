@@ -1,22 +1,11 @@
-import React, { useRef, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
-import Mapbox from '@rnmapbox/maps';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
+import React, { useCallback, useMemo } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
+import MapView, { Marker, MapPressEvent, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { colors } from '../../theme';
 import { MapPin } from '../MapPin';
-import { MAPBOX_ACCESS_TOKEN } from '../../utils/constants';
 import type { TerminalMapProps } from './types';
-
-Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
-
-const FORGE_DARK_STYLE = 'mapbox://styles/mapbox/dark-v11';
+import { GOOGLE_DARK_MAP_STYLE } from './googleDarkMapStyle';
 
 export function TerminalMap({
   latitude,
@@ -26,75 +15,72 @@ export function TerminalMap({
   onMarkerPress,
   onMapPress,
 }: TerminalMapProps) {
-  const cameraRef = useRef<Mapbox.Camera>(null);
+  const initialCamera = useMemo(
+    () => ({
+      center: { latitude, longitude },
+      pitch: 0,
+      heading: 0,
+      zoom: 11,
+    }),
+    [latitude, longitude],
+  );
 
-  const pulseScale = useSharedValue(1);
-
-  useEffect(() => {
-    pulseScale.value = withRepeat(
-      withTiming(1.8, { duration: 1500, easing: Easing.out(Easing.ease) }),
-      -1,
-      true
-    );
-  }, [pulseScale]);
-
-  const pulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }],
-    opacity: 2 - pulseScale.value,
-  }));
-
-  const handlePress = useCallback(() => {
-    onMapPress();
-  }, [onMapPress]);
+  const handleMapPress = useCallback(
+    (e: MapPressEvent) => {
+      if (e.nativeEvent.action === 'marker-press') {
+        return;
+      }
+      onMapPress();
+    },
+    [onMapPress],
+  );
 
   return (
-    <Mapbox.MapView
+    <MapView
       style={StyleSheet.absoluteFill}
-      styleURL={FORGE_DARK_STYLE}
-      onPress={handlePress}
-      attributionEnabled={false}
-      logoEnabled={false}
-      compassEnabled={false}
-      scaleBarEnabled={false}
-      // GLSurfaceView (surfaceView default) often stays black under React Navigation + edge-to-edge; TextureView works.
-      {...(Platform.OS === 'android' ? { surfaceView: false } : {})}
+      provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
+      initialCamera={initialCamera}
+      onPress={handleMapPress}
+      customMapStyle={Platform.OS === 'android' ? GOOGLE_DARK_MAP_STYLE : undefined}
+      userInterfaceStyle="dark"
+      rotateEnabled
+      pitchEnabled={false}
+      showsCompass={false}
+      toolbarEnabled={false}
+      mapType="standard"
     >
-      <Mapbox.Camera
-        ref={cameraRef}
-        defaultSettings={{
-          centerCoordinate: [longitude, latitude],
-          zoomLevel: 11,
-        }}
-        animationDuration={300}
-      />
-
-      {/* User location dot */}
-      <Mapbox.PointAnnotation
-        id="user-location"
-        coordinate={[longitude, latitude]}
+      <Marker
+        coordinate={{ latitude, longitude }}
+        anchor={{ x: 0.5, y: 0.5 }}
+        tracksViewChanges={false}
+        zIndex={1}
       >
         <View style={styles.userLocationContainer}>
-          <Animated.View style={[styles.userLocationPulse, pulseStyle]} />
+          <View style={styles.userLocationPulse} />
           <View style={styles.userLocationDot} />
         </View>
-      </Mapbox.PointAnnotation>
+      </Marker>
 
-      {/* Listing markers */}
       {listings.map((listing) => (
-        <Mapbox.PointAnnotation
+        <Marker
           key={listing.id}
-          id={`listing-${listing.id}`}
-          coordinate={[listing.longitude, listing.latitude]}
-          onSelected={() => onMarkerPress(listing)}
+          coordinate={{
+            latitude: listing.latitude,
+            longitude: listing.longitude,
+          }}
+          anchor={{ x: 0.5, y: 1 }}
+          tracksViewChanges
+          onPress={() => onMarkerPress(listing)}
+          zIndex={selectedListingId === listing.id ? 3 : 2}
         >
           <MapPin
             resourceType={listing.resource_type}
             priceDaily={listing.price_daily}
             isSelected={selectedListingId === listing.id}
           />
-        </Mapbox.PointAnnotation>
+        </Marker>
       ))}
-    </Mapbox.MapView>
+    </MapView>
   );
 }
 

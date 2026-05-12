@@ -18,7 +18,7 @@ This repository is **Terminal Mobile** — a React Native (Expo) mobile marketpl
 - **Web export/build**: `cd terminal-mobile && npx expo export --platform web`
 - **TypeScript check**: `cd terminal-mobile && node --stack-size=16384 ./node_modules/.bin/tsc --noEmit` (larger stack required for Tabler icons)
 - **Start dev** (web): Start CORS proxy first (`node proxy.js &`), then `npx expo start --web --port 8081`
-- **Native build**: `npx expo prebuild --clean` (required for Mapbox native code)
+- **Native build**: `npx expo prebuild --clean` (after native dependency changes)
 
 ### Backend
 
@@ -26,13 +26,11 @@ The API is at `https://terminalv2-production.up.railway.app/`. On web, requests 
 
 Test account: `testmobile@terminal.app` / `TestPass123!`
 
-### Mapbox setup
+### Maps setup
 
-Uses `@rnmapbox/maps` with two tokens (both provided as secrets):
-- **`MAPBOX_DOWNLOAD_TOKEN`** — build-time SDK download (DOWNLOADS:READ scope)
-- **`EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN`** — runtime map rendering (public `pk.ey*` token)
+Native map uses **`react-native-maps`** (Google Maps on Android, Apple MapKit on iOS). Set **`EXPO_PUBLIC_GOOGLE_MAPS_API_KEY`** in EAS (and locally in `.env` if needed) — a Google Cloud key with **Maps SDK for Android** and **Maps SDK for iOS** enabled. The key is injected via `app.config.ts` into `android.config.googleMaps.apiKey` and `ios.config.googleMapsApiKey`.
 
-The map is platform-split: `src/components/map/TerminalMap.native.tsx` (Mapbox GL) vs `TerminalMap.tsx` (dark placeholder for web).
+Web uses `TerminalMap.tsx` (non-interactive dark placeholder, no API key).
 
 ### Design system reference
 

@@ -1,5 +1,7 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
+const googleMapsApiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Terminal',
@@ -18,6 +20,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: false,
     bundleIdentifier: 'com.terminal.mobile',
+    config: {
+      googleMapsApiKey,
+    },
   },
   android: {
     adaptiveIcon: {
@@ -26,25 +31,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     package: 'com.terminal.mobile',
     edgeToEdgeEnabled: true,
+    config: {
+      googleMaps: {
+        apiKey: googleMapsApiKey,
+      },
+    },
   },
   web: {
     favicon: './assets/favicon.png',
   },
-  plugins: [
-    'expo-secure-store',
-    'expo-font',
-    'expo-location',
-    [
-      '@rnmapbox/maps',
-      {
-        // Must match @rnmapbox/maps package.json `mapbox.android` for this release (SDK APIs used by Kotlin sources).
-        RNMapboxMapsVersion: '11.18.2',
-        // EAS injects RNMAPBOX_MAPS_DOWNLOAD_TOKEN; local dev may use MAPBOX_DOWNLOAD_TOKEN.
-        RNMapboxMapsDownloadToken:
-          process.env.RNMAPBOX_MAPS_DOWNLOAD_TOKEN ??
-          process.env.MAPBOX_DOWNLOAD_TOKEN ??
-          '',
-      },
-    ],
-  ],
+  plugins: ['expo-secure-store', 'expo-font', 'expo-location'],
 });
