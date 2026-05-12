@@ -7,6 +7,11 @@ interface MapSearchParams {
   radius?: number;
   resource_type?: string;
   available?: boolean;
+  /**
+   * Free-text map search. Sent as `search` (Django REST `SearchFilter` default)
+   * and `q` (common alias) so terminalv2 can honor either without a mobile change.
+   */
+  search?: string;
 }
 
 interface MapSearchResponse {
@@ -34,6 +39,12 @@ export async function fetchMapListings(
 
   if (params.available !== undefined) {
     queryParams.available = params.available.toString();
+  }
+
+  const trimmedSearch = params.search?.trim();
+  if (trimmedSearch) {
+    queryParams.search = trimmedSearch;
+    queryParams.q = trimmedSearch;
   }
 
   const { data } = await apiClient.get<MapSearchResponse>('/search/map/', {

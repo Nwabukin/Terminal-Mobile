@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -35,6 +35,9 @@ const RESOURCE_FILTERS = [
 
 const RADIUS_OPTIONS = [10, 20, 50, 100, 200];
 const DEFAULT_RADIUS = 50;
+const MAP_SEARCH_DEBOUNCE_MS = 400;
+
+const EMPTY_MAP_LISTINGS: SearchResult[] = [];
 
 interface MapScreenProps {
   navigation: NativeStackNavigationProp<any>;
@@ -45,16 +48,25 @@ export default function MapScreen({ navigation }: MapScreenProps) {
   const { latitude, longitude, loading: locationLoading } = useLocation();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [radius, setRadius] = useState(DEFAULT_RADIUS);
   const [radiusMenuOpen, setRadiusMenuOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SearchResult | null>(null);
 
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(searchQuery.trim());
+    }, MAP_SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [searchQuery]);
+
   const {
     data: searchResponse,
     isLoading: searchLoading,
+    isFetching: searchFetching,
   } = useQuery({
-    queryKey: ['mapListings', latitude, longitude, radius, selectedType],
+    queryKey: ['mapListings', latitude, longitude, radius, selectedType, debouncedSearch],
     queryFn: () =>
       fetchMapListings({
         lat: latitude,
@@ -62,23 +74,27 @@ export default function MapScreen({ navigation }: MapScreenProps) {
         radius,
         resource_type: selectedType ?? undefined,
         available: true,
+        search: debouncedSearch || undefined,
       }),
     enabled: !locationLoading,
     staleTime: 30_000,
   });
 
-  const listings = searchResponse?.data ?? [];
+  const listings = searchResponse?.data ?? EMPTY_MAP_LISTINGS;
 
-  const filteredListings = useMemo(() => {
-    if (!searchQuery.trim()) return listings;
-    const q = searchQuery.toLowerCase();
-    return listings.filter(
-      (l) =>
-        l.title.toLowerCase().includes(q) ||
-        l.category.toLowerCase().includes(q) ||
-        l.location_city.toLowerCase().includes(q)
-    );
-  }, [listings, searchQuery]);
+  const listingIdsKey = useMemo(
+    () => listings.map((l) => l.id).join(','),
+    [listings],
+  );
+
+  useEffect(() => {
+    const data = searchResponse?.data;
+    if (!data) return;
+    setSelectedListing((prev) => {
+      if (!prev) return null;
+      return data.find((l) => l.id === prev.id) ?? null;
+    });
+  }, [listingIdsKey, searchResponse?.data]);
 
   const handleMarkerPress = useCallback((listing: SearchResult) => {
     setSelectedListing(listing);
@@ -124,7 +140,7 @@ export default function MapScreen({ navigation }: MapScreenProps) {
       <TerminalMap
         latitude={latitude}
         longitude={longitude}
-        listings={filteredListings}
+        listings={listings}
         selectedListingId={selectedListing?.id ?? null}
         onMarkerPress={handleMarkerPress}
         onMapPress={handleMapPress}
@@ -136,13 +152,13 @@ export default function MapScreen({ navigation }: MapScreenProps) {
           <IconSearch size={18} color={colors.textTertiary} strokeWidth={1.5} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search Lagos..."
+            placeholder="Search by keyword…"
             placeholderTextColor={colors.textTertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
             returnKeyType="search"
           />
-          {searchLoading && (
+          {(searchLoading || searchFetching) && (
             <ActivityIndicator size="small" color={colors.forge} />
           )}
         </View>
@@ -214,10 +230,10 @@ export default function MapScreen({ navigation }: MapScreenProps) {
       </Pressable>
 
       {/* Result count badge */}
-      {!searchLoading && filteredListings.length > 0 && !selectedListing && (
+      {!searchLoading && !searchFetching && listings.length > 0 && !selectedListing && (
         <View style={[styles.countBadge, { bottom: insets.bottom + spacing.lg }]}>
           <Text style={styles.countText}>
-            {filteredListings.length} listing{filteredListings.length !== 1 ? 's' : ''} nearby
+            {listings.length} listing{listings.length !== 1 ? 's' : ''} nearby
           </Text>
         </View>
       )}

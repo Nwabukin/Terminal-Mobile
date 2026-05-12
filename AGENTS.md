@@ -24,6 +24,8 @@ This repository is **Terminal Mobile** — a React Native (Expo) mobile marketpl
 
 The API is at `https://terminalv2-production.up.railway.app/`. On web, requests route through a local CORS proxy (`proxy.js` on port 3456). On native, requests go directly to the Railway URL. The `API_BASE_URL` constant in `src/utils/constants.ts` handles this platform split.
 
+The map list endpoint is `GET /api/v1/search/map/` with `lat`, `lng`, `radius`, optional `resource_type`, `available`, and optional text search: the app sends **`search`** (Django REST `SearchFilter` default) and **`q`** (common alias) with the same trimmed string so the terminalv2 backend can honor either.
+
 Test account: `testmobile@terminal.app` / `TestPass123!`
 
 ### Maps setup
