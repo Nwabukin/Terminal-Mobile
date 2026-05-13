@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   IconBuildingWarehouse,
@@ -10,15 +11,20 @@ import {
 } from '@tabler/icons-react-native';
 
 import OwnerDashboardScreen from '../screens/owner/OwnerDashboardScreen';
+import ListingDetailScreen from '../screens/renter/ListingDetailScreen';
+import { RequestBookingScreen } from '../screens/renter/RequestBookingScreen';
 import { BookingsScreen } from '../screens/shared/BookingsScreen';
+import { BookingDetailScreen } from '../screens/owner/BookingDetailScreen';
 import { ThreadListScreen } from '../screens/shared/ThreadListScreen';
+import { ThreadScreen } from '../screens/shared/ThreadScreen';
 import { ProfileScreen } from '../screens/shared/ProfileScreen';
 import { colors } from '../theme/colors';
 import { fontFamilies } from '../theme/typography';
 import { spacing } from '../theme/spacing';
-import type { OwnerTabParamList } from './types';
+import type { OwnerStackParamList, OwnerTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<OwnerTabParamList>();
+const Stack = createNativeStackNavigator<OwnerStackParamList>();
 
 const TAB_LABELS: Record<string, string> = {
   Listings: 'Yard',
@@ -40,7 +46,9 @@ function TabBarIcon({
 }) {
   return (
     <View style={tabIconStyles.wrapper}>
-      {focused && <View style={tabIconStyles.indicator} />}
+      {focused ? (
+        <View style={tabIconStyles.indicator} pointerEvents="none" />
+      ) : null}
       {children}
       <Text
         style={[
@@ -54,7 +62,7 @@ function TabBarIcon({
   );
 }
 
-export function OwnerTabs() {
+function OwnerTabsInner() {
   const insets = useSafeAreaInsets();
 
   return (
@@ -135,6 +143,30 @@ export function OwnerTabs() {
         }}
       />
     </Tab.Navigator>
+  );
+}
+
+export function OwnerTabs() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.abyss },
+      }}
+    >
+      <Stack.Screen name="OwnerHome" component={OwnerTabsInner} />
+      <Stack.Screen name="ListingDetail" component={ListingDetailScreen} />
+      <Stack.Screen
+        name="RequestBooking"
+        component={RequestBookingScreen}
+        options={{
+          presentation: 'transparentModal',
+          animation: 'slide_from_bottom',
+        }}
+      />
+      <Stack.Screen name="BookingDetail" component={BookingDetailScreen} />
+      <Stack.Screen name="Thread" component={ThreadScreen} />
+    </Stack.Navigator>
   );
 }
 
