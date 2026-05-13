@@ -19,15 +19,21 @@ export function RootNavigator() {
     hydrateRole();
   }, [hydrateRole]);
 
-  const MainTabs = activeRole === 'owner' ? OwnerTabs : RenterTabs;
-
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!isAuthenticated ? (
         <Stack.Screen name="Auth" component={AuthNavigator} />
       ) : (
         <>
-          <Stack.Screen name="Main" component={MainTabs} />
+          {/*
+            Remount when switching renter/owner so native stack + tabs do not leave
+            a stale screen layer that intercepts touches (Android).
+          */}
+          <Stack.Screen
+            key={activeRole}
+            name="Main"
+            component={activeRole === 'owner' ? OwnerTabs : RenterTabs}
+          />
           <Stack.Screen
             name="ListingWizard"
             component={ListingWizardScreen}

@@ -28,6 +28,15 @@ export type OwnerTabParamList = {
   OwnerProfile: undefined;
 };
 
+/** Native stack wrapping owner tabs — same detail routes as renter so `navigate()` from shared screens works. */
+export type OwnerStackParamList = {
+  OwnerHome: undefined;
+  ListingDetail: { listingId: string };
+  RequestBooking: { listing?: Listing; listingId?: string };
+  BookingDetail: { bookingId: string };
+  Thread: { threadId: string };
+};
+
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
