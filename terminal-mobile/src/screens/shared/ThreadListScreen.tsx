@@ -5,6 +5,7 @@ import {
   FlatList,
   Pressable,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -87,7 +88,7 @@ function ThreadRow({ thread, onPress }: ThreadRowProps) {
 export function ThreadListScreen() {
   const navigation = useNavigation<any>();
 
-  const { data, isLoading, refetch, isRefetching } = useQuery({
+  const { data, isLoading, isPending, refetch, isRefetching } = useQuery({
     queryKey: ['threads'],
     queryFn: getThreads,
     refetchInterval: 15000,
@@ -129,7 +130,11 @@ export function ThreadListScreen() {
         onRefresh={refetch}
         refreshing={isRefetching}
         ListEmptyComponent={
-          isLoading ? null : (
+          isLoading || isPending ? (
+            <View style={s.listLoading}>
+              <ActivityIndicator size="large" color={colors.forge} />
+            </View>
+          ) : (
             <EmptyState
               title="No conversations"
               description="Start a conversation from a listing page."
@@ -158,6 +163,11 @@ const s = StyleSheet.create({
   list: {
     paddingHorizontal: screenPadding.horizontal,
     flexGrow: 1,
+  },
+  listLoading: {
+    paddingVertical: spacing.xl * 2,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   // Thread row

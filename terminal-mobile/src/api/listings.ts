@@ -1,4 +1,5 @@
 import apiClient from './client';
+import { extractPagedItems } from './pagination';
 import type { Listing, ApiResponse } from './types';
 
 export async function fetchListingDetail(id: string): Promise<Listing> {
@@ -12,13 +13,8 @@ export async function fetchListingDetail(id: string): Promise<Listing> {
 }
 
 export async function getMyListings(): Promise<Listing[]> {
-  const { data } = await apiClient.get<ApiResponse<Listing[]>>(
-    '/listings/?own=true',
-  );
-  if (!data.success || !data.data) {
-    throw new Error(data.message || 'Failed to fetch listings');
-  }
-  return data.data;
+  const { data } = await apiClient.get<unknown>('/listings/?own=true');
+  return extractPagedItems<Listing>(data);
 }
 
 export async function createListing(

@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 
 import { colors } from '../../theme/colors';
@@ -51,6 +51,12 @@ export function BookingsScreen() {
         status: getStatusFilter(activeFilter),
       }),
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      void refetch();
+    }, [refetch]),
+  );
 
   const bookings: Booking[] = data?.data ?? [];
 
