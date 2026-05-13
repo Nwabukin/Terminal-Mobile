@@ -1,4 +1,5 @@
 import apiClient from './client';
+import { extractPagedCount, extractPagedItems } from './pagination';
 import type { Booking, ApiResponse, PaginatedResponse } from './types';
 
 export interface CreateBookingPayload {
@@ -24,10 +25,13 @@ export async function getBookings(filters: BookingFilters = {}) {
   if (filters.role) params.set('role', filters.role);
   if (filters.status) params.set('status', filters.status);
 
-  const { data } = await apiClient.get<PaginatedResponse<Booking>>(
-    `/bookings/?${params.toString()}`
-  );
-  return data;
+  const { data } = await apiClient.get<unknown>(`/bookings/?${params.toString()}`);
+  const items = extractPagedItems<Booking>(data);
+  return {
+    success: true,
+    count: extractPagedCount(data) ?? items.length,
+    data: items,
+  } satisfies PaginatedResponse<Booking>;
 }
 
 export async function getBookingDetail(bookingId: string) {

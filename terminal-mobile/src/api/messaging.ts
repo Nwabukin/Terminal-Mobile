@@ -1,4 +1,5 @@
 import apiClient from './client';
+import { extractPagedItems } from './pagination';
 import type { Thread, Message, ApiResponse } from './types';
 
 export interface CreateInquiryPayload {
@@ -17,8 +18,8 @@ export interface ThreadDetailResponse {
 }
 
 export async function getThreads() {
-  const { data } = await apiClient.get<{ success: boolean; data: Thread[] }>('/threads/');
-  return data;
+  const { data } = await apiClient.get<unknown>('/threads/');
+  return { success: true as const, data: extractPagedItems<Thread>(data) };
 }
 
 export async function createInquiryThread(payload: CreateInquiryPayload) {

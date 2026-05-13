@@ -17,6 +17,7 @@ import { colors } from '../../theme/colors';
 import { typeScale, fontFamilies } from '../../theme/typography';
 import { spacing, radii, screenPadding } from '../../theme/spacing';
 import apiClient from '../../api/client';
+import { extractPagedCount, extractPagedItems } from '../../api/pagination';
 import { useAuthStore } from '../../store/authStore';
 import { LoadingSkeleton } from '../../components';
 import { EmptyState } from '../../components';
@@ -60,10 +61,13 @@ export default function OwnerDashboardScreen() {
   } = useQuery({
     queryKey: ['owner-bookings'],
     queryFn: async () => {
-      const { data } = await apiClient.get<PaginatedResponse<Booking>>(
-        '/bookings/?role=owner',
-      );
-      return data;
+      const { data } = await apiClient.get<unknown>('/bookings/?role=owner');
+      const items = extractPagedItems<Booking>(data);
+      return {
+        success: true,
+        count: extractPagedCount(data) ?? items.length,
+        data: items,
+      } satisfies PaginatedResponse<Booking>;
     },
   });
 
@@ -76,10 +80,9 @@ export default function OwnerDashboardScreen() {
   } = useQuery({
     queryKey: ['owner-listings'],
     queryFn: async () => {
-      const { data } = await apiClient.get<ApiResponse<Listing[]>>(
-        '/listings/?own=true',
-      );
-      return data;
+      const { data } = await apiClient.get<unknown>('/listings/?own=true');
+      const items = extractPagedItems<Listing>(data);
+      return { success: true as const, data: items } satisfies ApiResponse<Listing[]>;
     },
   });
 

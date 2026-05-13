@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   format,
   eachDayOfInterval,
@@ -61,6 +61,7 @@ const SHEET_HEIGHT = Math.round(WINDOW_HEIGHT * 0.88);
 export function RequestBookingScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
   const route = useRoute<any>();
   const routeListing = route.params?.listing as Listing | undefined;
   const listingId: string | undefined = routeListing?.id ?? route.params?.listingId;
@@ -135,6 +136,8 @@ export function RequestBookingScreen() {
   const mutation = useMutation({
     mutationFn: createBooking,
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      void queryClient.invalidateQueries({ queryKey: ['owner-bookings'] });
       Alert.alert('Request sent', 'The owner will review your booking request.', [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);
