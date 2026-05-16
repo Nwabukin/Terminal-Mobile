@@ -2,7 +2,7 @@
 
 ### Project overview
 
-This repository is **Terminal Mobile** — a React Native (Expo) mobile marketplace app for heavy industrial asset leasing (cranes, trucks, warehouses, container yards) targeting Nigerian operators. Built from the **Terminal Design System (TDS) v1.1 "Forge Dark"**. All 5 waves (00-04) are implemented — the app is MVP-complete.
+This repository is **Terminal Mobile** — a React Native (Expo) mobile marketplace app for heavy industrial asset leasing (cranes, trucks, warehouses, container yards) targeting Nigerian operators. Built from the **Terminal Design System (TDS) v1.1 "Forge Dark"**. The app is MVP-complete.
 
 ### Relevant services
 
